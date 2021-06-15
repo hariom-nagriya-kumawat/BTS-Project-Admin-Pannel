@@ -14,13 +14,14 @@ import { redirectTo } from "../actions";
 // );
 
 class TheContent extends Component {
-  // componentDidMount() {
-  //   if (!localStorage.getItem("token")) {
-  //     this.props.history.push("/login");
-  //   } else {
-  //     this.props.getProfileInfo();
-  //   }
-  // }
+  componentDidMount() {
+    if (!localStorage.getItem("token")) {
+      this.props.history.push("/login");
+    } 
+    // else {
+    //   this.props.getProfileInfo();
+    // }
+  }
   // componentDidUpdate({ location }) {
   //   const { pathname } = location;
   //   if (pathname !== this.props.location.pathname) {
