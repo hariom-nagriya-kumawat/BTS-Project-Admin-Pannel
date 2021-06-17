@@ -1,7 +1,27 @@
 {
-  "name": "bts-admin",
-  "version": "0.1.0",
+  "name": "@coreui/coreui-free-react-admin-template",
+  "version": "3.2.1",
+  "description": "CoreUI React Open Source Bootstrap 4 Admin Template",
+  "author": {
+    "name": "CoreUI",
+    "url": "https://coreui.io",
+    "github": "https://github.com/coreui",
+    "twitter": "https://twitter.com/core_ui"
+  },
+  "contributors": [
+    {
+      "name": "CoreUI Team",
+      "url": "https://github.com/orgs/coreui/people"
+    }
+  ],
+  "homepage": ".",
+  "copyright": "Copyright 2017-2020 creativeLabs Łukasz Holeczek",
+  "license": "MIT",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:coreui/coreui-free-react-admin-template.git"
+  },
   "dependencies": {
     "@coreui/chartjs": "^2.0.0",
     "@coreui/coreui": "^3.4.0",
@@ -19,11 +39,13 @@
     "history": "^5.0.0",
     "jquery": "^3.6.0",
     "js-object-validation": "^2.0.1",
+    "moment": "^2.29.1",
     "multiselect-react-dropdown": "^1.6.13",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
     "react-app-polyfill": "^2.0.0",
     "react-beautiful-dnd": "^13.1.0",
+    "react-datepicker": "^4.1.1",
     "react-dom": "^17.0.2",
     "react-dropzone": "^11.3.2",
     "react-helmet": "^6.1.0",
@@ -52,6 +74,9 @@
     "test:debug": "react-scripts --inspect-brk test --runInBand",
     "eject": "react-scripts eject",
     "changelog": "auto-changelog --starting-version 3.0.0 --commit-limit false --hide-credit"
+  },
+  "bugs": {
+    "url": "https://github.com/coreui/coreui-free-react-admin-template/issues"
   },
   "eslintConfig": {
     "extends": "react-app"
