@@ -13,28 +13,25 @@ import LoyaltyCard from "./discountItems/LoyaltyCard";
 import GiftCard from "./discountItems/GiftCard";
 import Voucher from "./discountItems/Voucher";
 import Coupon from "./discountItems/Coupon";
+import Pickup from "./conditionItems/DiscountPickup";
+import Delivery from "./conditionItems/DiscountDelivery";
 class Index extends Component {
   constructor(props) {
     super(props);
     this.state = {
       show: false,
       show1: false,
-    }
+    };
   }
 
   render() {
     const { show, show1 } = this.state;
     return (
-
       <>
-
         <CCard className="w-100">
           <CCardHeader className="d-flex flex-row justify-content-between w-100 bg1">
-            <h6 className ="text-white mt-1">
-              CHARGES & CONDITIONS
-            </h6>
+            <h6 className="text-white mt-1">CHARGES & CONDITIONS</h6>
             <div>
-
               {this.state.show === true ? (
                 <CTooltip content="expanded">
                   <i
@@ -58,25 +55,23 @@ class Index extends Component {
                 />
               )}
             </div>
-          </CCardHeader></CCard>
+          </CCardHeader>
+        </CCard>
 
         <CCollapse show={show1}>
           <CRow>
-
-            <CCol xs="12" sm="12">
-              
-              <h5 className="text-center">Comming Soon</h5>
+            <CCol xs="12" sm="6">
+              <Pickup {...this.props} />
             </CCol>
-
+            <CCol xs="12" sm="6">
+              <Delivery {...this.props} />
+            </CCol>
           </CRow>
         </CCollapse>
         <CCard className="w-100">
           <CCardHeader className="d-flex flex-row justify-content-between w-100 bg1">
-            <h6 className ="text-white">
-              OTHER DISCOUNT
-            </h6>
+            <h6 className="text-white">OTHER DISCOUNT</h6>
             <div>
-
               {this.state.show === true ? (
                 <CTooltip content="expanded">
                   <i
@@ -101,11 +96,11 @@ class Index extends Component {
                 />
               )}
             </div>
-          </CCardHeader></CCard>
+          </CCardHeader>
+        </CCard>
 
         <CCollapse show={show}>
           <CRow>
-
             <CCol xs="12" sm="6">
               <HappyHourse />
             </CCol>
@@ -130,11 +125,9 @@ class Index extends Component {
             </CCol>
           </CRow>
         </CCollapse>
-
       </>
     );
   }
 }
-
 
 export default Index;

@@ -68,7 +68,7 @@ const getListItemsLogic = createLogic({
       "/item",
       "GET",
       true,
-      undefined,
+      action.payload,
       undefined
     );
     if (result.isError) {

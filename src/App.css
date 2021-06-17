@@ -15,14 +15,15 @@ html {
   background-color: #ddd !important;
 }
 .table1header {
-  /* position: -webkit-sticky; */
-  position: sticky;
+  position: -webkit-sticky;
+  /* position: sticky; */
   top: 0;
 }
 .table1div {
   display: inline-block;
   height: 280px;
   overflow: auto;
+  width: 100%;
 }
 input[type="checkbox"] {
   background-color: var(--Bg1);
@@ -32,7 +33,6 @@ table th {
   border: 2px solid #ced2d8;
   padding: 8px 16px;
   text-align: center;
-  width: max-content;
   text-transform: capitalize;
 }
 .optionContainer .highlight {
@@ -57,7 +57,10 @@ table th {
   background-color: var(--Bg1);
   color: var(--Text1);
 }
-
+.td2{
+  min-width: 100px !important;
+  max-width: 300px !important;
+}
 .cont {
   /* background: linear-gradient(-45deg, #ced2d8, #6b6769, #343a40, var(--Bg1)); */
   background-size: 400% 400%;

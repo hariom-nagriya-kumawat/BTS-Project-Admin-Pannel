@@ -78,20 +78,36 @@ class HappyHourse extends Component {
     });
   };
 
+  keypressHandler = event => {
+    if (event.key === "Enter") {
+      this.onAddDiscount();
+    }
+  };
 
+  onAddDiscount() {
+    const {
+      discount,
+      type,
+      is_deleted,
+      newRow, is_removed, min_order_value,
+    } = this.state;
+    this.props.onAddHoursDiscount({
+      discount: parseFloat(discount),
+      type: "FLAT",
+      day_time: {},
+      min_order_value: 0.0,
+      is_deleted: false,
+      is_removed: false,
+    })
+  }
   render() {
     const { DiscountReducerData } = this.props;
     const {
       discount,
       type,
-      day_time,
-      min_order_value,
       is_deleted,
-      is_removed,
       newRow,
       updateData, selectRowId, selectRowClick,
-      discount_type,
-      payment_type,
     } = this.state;
     return (
       <>
@@ -134,13 +150,13 @@ class HappyHourse extends Component {
               <table className="table table-bordered table-sm">
                 <thead className="table1header">
                   <tr>
-                    <th scope="col">Discount</th>
-                    <th scope="col">Type</th>
-                    <th scope="col">Day & Time</th>
-                    <th scope="col">Minimum Order</th>
-                    <th scope="col">Discount Type</th>
-                    <th scope="col">Payment Type</th>
-                    <th scope="col">Action</th>
+                    <th className="td2">Discount</th>
+                    <th className="td2">Type</th>
+                    <th className="td2">Day&Time</th>
+                    <th className="td2">Minimum Order</th>
+                    <th className="td2">Discount Type</th>
+                    <th className="td2">Payment Type</th>
+                    <th className="td2">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -157,16 +173,8 @@ class HappyHourse extends Component {
                                 e.target.value,
                             })
                           }
-                          onBlur={() =>
-                            this.props.onAddHoursDiscount({
-                              discount: parseFloat(discount),
-                              type: "FLAT",
-                              day_time: {},
-                              min_order_value: 0.0,
-                              is_deleted: false,
-                              is_removed: false,
-                            })
-                          }
+                          onKeyPress={event => this.keypressHandler(event)}
+                          onBlur={() => this.onAddDiscount()}
                         />
                       </td>
                       <td></td>
@@ -357,7 +365,7 @@ class HappyHourse extends Component {
                                 <CBadge
                                   className={`${!itm.is_deleted
                                     ? "bg1"
-                                    : "bg-secondary"
+                                    : "bg-secondary text-dark"
                                     } text-white px-1`}
                                   onClick={() =>
                                     this.props.onUpdateData(
@@ -375,7 +383,7 @@ class HappyHourse extends Component {
                                 <CBadge
                                   className={`${itm.is_deleted
                                     ? "btn-youtube"
-                                    : "bg-secondary"
+                                    : "bg-secondary text-dark"
                                     } text-white px-1 ml-1`}
                                   onClick={() =>
                                     this.props.onUpdateData(
@@ -409,7 +417,7 @@ class HappyHourse extends Component {
               </table>
             </div>
           </CCardBody>
-        </CCard>
+        </CCard >
 
       </>
     );

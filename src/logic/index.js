@@ -3,13 +3,14 @@ import { createLogic } from "redux-logic";
 
 import { AuthLogic } from "./auth";
 import { CategoriesLogic } from "./categories";
-import {SubCategoriesLogic} from './listSubCategories';
-import {FoodTypesLogic} from './FoodType';
-import {FilterTypeLogic} from './FilterType';
-import{ListItemsLogic} from './LIstItem';
-import {DayDiscountLogic} from './Discount/DayDiscount';
-import {HoureDiscountLogic} from './Discount/hourDiscount';
-
+import { SubCategoriesLogic } from "./listSubCategories";
+import { FoodTypesLogic } from "./FoodType";
+import { FilterTypeLogic } from "./FilterType";
+import { ListItemsLogic } from "./LIstItem";
+import { DayDiscountLogic } from "./Discount/DayDiscount";
+import { HoureDiscountLogic } from "./Discount/hourDiscount";
+import { DiscountCardLogic } from "./Discount/DiscountCard";
+import { OrderDiscountLogic } from "./Discount/OrderDiscount";
 export const redirectToLogic = createLogic({
   type: "REDIRET_TO",
   async process({ action }, dispatch, done) {
@@ -27,5 +28,8 @@ export default [
   ...ListItemsLogic,
   ...HoureDiscountLogic,
   ...DayDiscountLogic,
+  ...DiscountCardLogic,
+  ...OrderDiscountLogic,
+
   redirectToLogic,
 ];

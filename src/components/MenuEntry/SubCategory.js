@@ -15,7 +15,7 @@ import {
   getSubCategoriesRequest,
   getFilterTypeRequest,
   getFoodTypesRequest,
-  updateSubCategoryOrderRequest
+  updateSubCategoryOrderRequest,
 } from "../../actions";
 import Loader from "../../containers/Loader/Loader";
 import { Multiselect } from "multiselect-react-dropdown";
@@ -117,7 +117,8 @@ class ListItems extends Component {
       subCategorieReducerData.updateReq &&
       this.props.subCategorieReducerData &&
       this.props.subCategorieReducerData.updateReq &&
-      this.props.subCategorieReducerData.updateReq !== subCategorieReducerData.updateReq
+      this.props.subCategorieReducerData.updateReq !==
+        subCategorieReducerData.updateReq
     ) {
       let data = this.props.subCategorieReducerData.data.filter(
         (item) => item._id === this.state.selectRowId
@@ -139,7 +140,7 @@ class ListItems extends Component {
       });
     }
   }
-  
+
   onDragEnd = (result) => {
     const { pannelType } = this.props;
     const { destination, source, reason, draggableId } = result;
@@ -358,6 +359,9 @@ class ListItems extends Component {
               <i class="fas fa-list-alt mr-2"></i>List Of Sub Category
             </h6>
             <div>
+              <CButton className="btn-youtube text-white mr-2" size="sm">
+                <i class="fas fa-minus" />
+              </CButton>
               <CButton
                 className="bg1 text-white"
                 size="sm"
@@ -372,30 +376,24 @@ class ListItems extends Component {
               >
                 <i class="fas fa-plus" />
               </CButton>
-
-              <CButton className="bg-danger text-white ml-2" size="sm">
-                <i class="fas fa-minus" />
-              </CButton>
             </div>
           </CCardHeader>
           <CCardBody>
-            <DragDropContext
-              onDragEnd={this.onDragEnd}
-            >
+            <DragDropContext onDragEnd={this.onDragEnd}>
               <div className="table-responsive table1div">
                 <table class="table table-bordered table-sm">
                   <thead className="table1header">
                     <tr>
-                      <th scope="col">Name</th>
-                      <th scope="col">Description</th>
-                      <th scope="col">Order</th>
-                      <th scope="col">Not For Web</th>
-                      <th scope="col">Allergy Selection</th>
-                      <th scope="col">Food Type Selection</th>
-                      <th scope="col">Not Fot TW</th>
-                      <th scope="col">Discount</th>
-                      <th scope="col">Pannel</th>
-                      <th scope="col">Action</th>
+                      <th className="td2">Name</th>
+                      <th className="td2">Description</th>
+                      <th className="td2">Order</th>
+                      <th className="td2">Not For Web</th>
+                      <th className="td2">Allergy Selection</th>
+                      <th className="td2">Food Type Selection</th>
+                      <th className="td2">Not Fot TW</th>
+                      <th className="td2">Discount</th>
+                      <th className="td2">Pannel</th>
+                      <th className="td2">Action</th>
                     </tr>
                   </thead>
                   <Droppable droppableId="table">
@@ -451,7 +449,7 @@ class ListItems extends Component {
                                 <div className="d-flex flex-row text-center">
                                   <CBadge
                                     className={`${
-                                      !is_deleted ? "bg1" : "bg-secondary"
+                                      !is_deleted ? "bg1" : "bg-secondary text-dark"
                                     } text-white px-1 pt-1 pb-1`}
                                   >
                                     Enable
@@ -461,7 +459,7 @@ class ListItems extends Component {
                                     className={`${
                                       is_deleted
                                         ? "btn-youtube"
-                                        : "bg-secondary"
+                                        : "bg-secondary text-dark"
                                     } text-white px-1 pt-1 pb-1 ml-1`}
                                   >
                                     Disable
@@ -516,7 +514,8 @@ class ListItems extends Component {
                                                   this.props.onUpdateSubCategory(
                                                     {
                                                       name: updateCategoryData.name,
-                                                      sub_category_id: selectRowId,
+                                                      sub_category_id:
+                                                        selectRowId,
                                                     }
                                                   )
                                                 }
@@ -550,7 +549,8 @@ class ListItems extends Component {
                                                     {
                                                       description:
                                                         updateCategoryData.description,
-                                                      sub_category_id: selectRowId,
+                                                      sub_category_id:
+                                                        selectRowId,
                                                     }
                                                   )
                                                 }
@@ -668,10 +668,20 @@ class ListItems extends Component {
                                               name="is_tw"
                                               checked={item.is_tw}
                                               onChange={(e) =>
-                                                this.props.onUpdateSubCategory({
-                                                  sub_category_id: selectRowId,
-                                                  is_tw: e.target.checked,
-                                                })
+                                                this.setState(
+                                                  {
+                                                    selectRowId: item._id,
+                                                    selectRowClick: 1,
+                                                  },
+                                                  () =>
+                                                    this.props.onUpdateSubCategory(
+                                                      {
+                                                        sub_category_id:
+                                                          item._id,
+                                                        is_tw: e.target.checked,
+                                                      }
+                                                    )
+                                                )
                                               }
                                             />
                                           </td>
@@ -682,11 +692,21 @@ class ListItems extends Component {
                                               name="is_discount_applied"
                                               checked={item.is_discount_applied}
                                               onChange={(e) =>
-                                                this.props.onUpdateSubCategory({
-                                                  sub_category_id: selectRowId,
-                                                  is_discount_applied:
-                                                    e.target.checked,
-                                                })
+                                                this.setState(
+                                                  {
+                                                    selectRowId: item._id,
+                                                    selectRowClick: 1,
+                                                  },
+                                                  () =>
+                                                    this.props.onUpdateSubCategory(
+                                                      {
+                                                        sub_category_id:
+                                                          item._id,
+                                                        is_discount_applied:
+                                                          e.target.checked,
+                                                      }
+                                                    )
+                                                )
                                               }
                                             />
                                           </td>
@@ -698,14 +718,22 @@ class ListItems extends Component {
                                                   className={`${
                                                     !item.is_deleted
                                                       ? "bg1"
-                                                      : "bg-secondary"
+                                                      : "bg-secondary text-dark"
                                                   } text-white px-1`}
                                                   onClick={() =>
-                                                    this.props.onUpdateSubCategory(
+                                                    this.setState(
                                                       {
-                                                        is_deleted: false,
-                                                        sub_category_id: selectRowId,
-                                                      }
+                                                        selectRowId: item._id,
+                                                        selectRowClick: 1,
+                                                      },
+                                                      () =>
+                                                        this.props.onUpdateSubCategory(
+                                                          {
+                                                            is_deleted: false,
+                                                            sub_category_id:
+                                                              item._id,
+                                                          }
+                                                        )
                                                     )
                                                   }
                                                 >
@@ -717,14 +745,22 @@ class ListItems extends Component {
                                                   className={`${
                                                     item.is_deleted
                                                       ? "btn-youtube"
-                                                      : "bg-secondary"
+                                                      : "bg-secondary text-dark"
                                                   } text-white px-1 ml-1`}
                                                   onClick={() =>
-                                                    this.props.onUpdateSubCategory(
+                                                    this.setState(
                                                       {
-                                                        is_deleted: true,
-                                                        sub_category_id: selectRowId,
-                                                      }
+                                                        selectRowId: item._id,
+                                                        selectRowClick: 1,
+                                                      },
+                                                      () =>
+                                                        this.props.onUpdateSubCategory(
+                                                          {
+                                                            is_deleted: true,
+                                                            sub_category_id:
+                                                              item._id,
+                                                          }
+                                                        )
                                                     )
                                                   }
                                                 >
@@ -795,9 +831,9 @@ const mapDispatchToProps = (dispatch) => {
     onUpdateSubCategory: (data) => {
       dispatch(updateSubCategoriesRequest(data));
     },
-    onUpdateSubCategoryOrder:(data)=> {
+    onUpdateSubCategoryOrder: (data) => {
       dispatch(updateSubCategoryOrderRequest(data));
-    }
+    },
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(ListItems);

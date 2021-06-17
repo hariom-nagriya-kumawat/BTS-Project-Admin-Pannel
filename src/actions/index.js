@@ -10,6 +10,8 @@ export * from "./Item";
 export * from "./FilterType";
 export * from "./Discount/DayDiscount";
 export * from "./Discount/HourDiscount";
+export * from "./Discount/DiscountCard";
+export * from "./Discount/OrderDiscount";
 
 export const redirectTo = createAction("REDIRET_TO");
 

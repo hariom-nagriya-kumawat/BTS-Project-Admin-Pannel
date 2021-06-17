@@ -73,7 +73,7 @@ class Category extends Component {
       let allergyData =
         FilterTypeData &&
         FilterTypeData.data &&
-        FilterTypeData.data.filter((item) => item.name === "allergy")[0];
+        FilterTypeData.data.filter((item) => item.name === "allergy" || item.name === "Allergy" )[0];
       if (
         allergyData &&
         allergyData.filter_data &&
@@ -144,7 +144,7 @@ class Category extends Component {
       });
     }
   }
-  
+
   onDragEnd = (result) => {
     const { pannelType } = this.props;
     const { destination, source, reason, draggableId } = result;
@@ -360,12 +360,12 @@ class Category extends Component {
         <CCard>
           <CCardHeader className="d-flex  flex-row justify-content-between">
             <h6>
-              <i class="fas fa-list-alt mr-2"></i>Category Name
+              <i className="fas fa-list-alt mr-2"></i>Category Name
             </h6>
             <div>
               <CTooltip content="remove">
                 <CButton className="btn-youtube text-white mr-2" size="sm">
-                  <i class="fas fa-minus text-white" />
+                  <i className="fas fa-minus text-white" />
                 </CButton>
               </CTooltip>
               <CButton
@@ -380,7 +380,7 @@ class Category extends Component {
                   })
                 }
               >
-                <i class="fas fa-plus" />
+                <i className="fas fa-plus" />
               </CButton>
               <CTooltip content="Add Bulk">
                 <CButton
@@ -391,17 +391,18 @@ class Category extends Component {
                     this.props.modalOpenRequest({ bulkCategoryModalOpen: true })
                   }
                 >
-                  <i class="fas fa-file-download"></i>
+                  <i className="fas fa-file-download"></i>
                 </CButton>
               </CTooltip>
             </div>
           </CCardHeader>
           <CCardBody>
-            <DragDropContext
-              onDragEnd={this.onDragEnd}
-            >
+            <DragDropContext onDragEnd={this.onDragEnd}>
               <div className="table-responsive table1div">
-                <table class="table table-bordered table-sm">
+                <table
+                  className="table table-bordered table-sm"
+                  id="productSizes"
+                >
                   <thead className="table1header">
                     <tr>
                       <th scope="col">Name</th>
@@ -469,7 +470,9 @@ class Category extends Component {
                                 <div className="d-flex flex-row text-center">
                                   <CBadge
                                     className={`${
-                                      !is_deleted ? "bg1" : "bg-secondary"
+                                      !is_deleted
+                                        ? "bg1"
+                                        : "bg-secondary text-dark"
                                     } text-white px-1 pt-1 pb-1`}
                                   >
                                     Enable
@@ -479,7 +482,7 @@ class Category extends Component {
                                     className={`${
                                       is_deleted
                                         ? "btn-youtube"
-                                        : "bg-secondary"
+                                        : "bg-secondary text-dark"
                                     } text-white px-1 pt-1 pb-1 ml-1`}
                                   >
                                     Disable
@@ -579,10 +582,19 @@ class Category extends Component {
                                             name="is_web"
                                             checked={item.is_web}
                                             onChange={(e) =>
-                                              this.props.onUpdateCategories({
-                                                cId: selectRowId,
-                                                is_web: e.target.checked,
-                                              })
+                                              this.setState(
+                                                {
+                                                  selectRowId: item._id,
+                                                  selectRowClick: 1,
+                                                },
+                                                () =>
+                                                  this.props.onUpdateCategories(
+                                                    {
+                                                      cId: item._id,
+                                                      is_web: e.target.checked,
+                                                    }
+                                                  )
+                                              )
                                             }
                                           />
                                         </td>
@@ -611,9 +623,9 @@ class Category extends Component {
                                                 chips: { display: "none" },
                                                 searchBox: {
                                                   border: "none",
-                                                  "border-bottom":
+                                                  borderBottom:
                                                     "1px solid #19c133",
-                                                  "border-radius": "0px",
+                                                  borderRadius: "0px",
                                                   background: "#fff",
                                                 },
                                               }}
@@ -680,10 +692,19 @@ class Category extends Component {
                                             name="is_tw"
                                             checked={item.is_tw}
                                             onChange={(e) =>
-                                              this.props.onUpdateCategories({
-                                                cId: selectRowId,
-                                                is_tw: e.target.checked,
-                                              })
+                                              this.setState(
+                                                {
+                                                  selectRowId: item._id,
+                                                  selectRowClick: 1,
+                                                },
+                                                () =>
+                                                  this.props.onUpdateCategories(
+                                                    {
+                                                      cId: item._id,
+                                                      is_tw: e.target.checked,
+                                                    }
+                                                  )
+                                              )
                                             }
                                           />
                                         </td>
@@ -694,11 +715,20 @@ class Category extends Component {
                                             name="is_discount_applied"
                                             checked={item.is_discount_applied}
                                             onChange={(e) =>
-                                              this.props.onUpdateCategories({
-                                                cId: selectRowId,
-                                                is_discount_applied:
-                                                  e.target.checked,
-                                              })
+                                              this.setState(
+                                                {
+                                                  selectRowId: item._id,
+                                                  selectRowClick: 1,
+                                                },
+                                                () =>
+                                                  this.props.onUpdateCategories(
+                                                    {
+                                                      cId: item._id,
+                                                      is_discount_applied:
+                                                        e.target.checked,
+                                                    }
+                                                  )
+                                              )
                                             }
                                           />
                                         </td>
@@ -710,14 +740,21 @@ class Category extends Component {
                                                 className={`${
                                                   !item.is_deleted
                                                     ? "bg1"
-                                                    : "bg-secondary"
+                                                    : "bg-secondary text-dark"
                                                 } text-white px-1`}
                                                 onClick={() =>
-                                                  this.props.onUpdateCategories(
+                                                  this.setState(
                                                     {
-                                                      is_deleted: false,
-                                                      cId: selectRowId,
-                                                    }
+                                                      selectRowId: item._id,
+                                                      selectRowClick: 1,
+                                                    },
+                                                    () =>
+                                                      this.props.onUpdateCategories(
+                                                        {
+                                                          is_deleted: false,
+                                                          cId: item._id,
+                                                        }
+                                                      )
                                                   )
                                                 }
                                               >
@@ -729,14 +766,21 @@ class Category extends Component {
                                                 className={`${
                                                   item.is_deleted
                                                     ? "btn-youtube"
-                                                    : "bg-secondary"
+                                                    : "bg-secondary text-dark"
                                                 } text-white px-1 ml-1`}
                                                 onClick={() =>
-                                                  this.props.onUpdateCategories(
+                                                  this.setState(
                                                     {
-                                                      is_deleted: true,
-                                                      cId: selectRowId,
-                                                    }
+                                                      selectRowId: item._id,
+                                                      selectRowClick: 1,
+                                                    },
+                                                    () =>
+                                                      this.props.onUpdateCategories(
+                                                        {
+                                                          is_deleted: true,
+                                                          cId: item._id,
+                                                        }
+                                                      )
                                                   )
                                                 }
                                               >
@@ -752,9 +796,9 @@ class Category extends Component {
                               })
                             ) : (
                               <tr>
-                                <td colspan="11">
+                                <td colSpan="11">
                                   <h6>
-                                    <i class="fas fa-exclamation-triangle text-danger mr-2" />
+                                    <i className="fas fa-exclamation-triangle text-danger mr-2" />
                                     Not Found
                                   </h6>
                                 </td>
@@ -762,7 +806,7 @@ class Category extends Component {
                             )
                           ) : (
                             <tr>
-                              <td colspan="11">
+                              <td colSpan="11">
                                 <Loader />
                               </td>
                             </tr>

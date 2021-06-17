@@ -162,7 +162,7 @@ const updateDayDiscountLogic = createLogic({
     } else {
       logger(result);
       dispatch(getDayDiscountSuccessById({ dataById: {} }));
-      let index = data.findIndex((item) => item._id === action.payload.cId);
+      let index = data.findIndex((item) => item._id === action.payload.discount_id);
       data[index] = result.data;
       dispatch(
         getDayDiscountSuccess({ data: data, isLoading: false, updateReq: "End" })

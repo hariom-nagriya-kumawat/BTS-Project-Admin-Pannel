@@ -7,11 +7,13 @@ import { AuthReducer } from "./auth";
 import { CategorieReducer } from "./categories";
 import { SubCategorieReducer } from "./subCategories";
 import { ModalReducer } from "./modalOperations";
-import {FoodTypeReducer} from './FoodType';
-import {FilterTypeReducer} from './FilterTypeReduser'
-import {ItemsReducer} from './ItemReducer';
-import {DayDiscountReducer} from './Discount/ReducerDay';
-import {HourDiscountReducer} from './Discount/ReducerHour';
+import { FoodTypeReducer } from "./FoodType";
+import { FilterTypeReducer } from "./FilterTypeReduser";
+import { ItemsReducer } from "./ItemReducer";
+import { DayDiscountReducer } from "./Discount/ReducerDay";
+import { HourDiscountReducer } from "./Discount/ReducerHour";
+import { DiscountCardReducer } from "./Discount/DiscountCard";
+import { OrderDiscountReducer } from "./Discount/OrderCard";
 export const mainReducer = handleActions(
   {
     SHOW_LOADER: (state, action) => ({
@@ -38,6 +40,8 @@ const AppReducer = combineReducers({
   ItemsReducer,
   HourDiscountReducer,
   DayDiscountReducer,
+  DiscountCardReducer,
+  OrderDiscountReducer,
   routing: routerReducer,
 });
 

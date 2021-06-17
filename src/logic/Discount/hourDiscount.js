@@ -10,8 +10,6 @@ import {
   hourDiscountActions,
   addHoureDiscountSuccess,
   getHoureDiscountSuccess,
-  getHoureDiscountRequest,
-  modalCloseRequest,
   getHoureDiscountSuccessById,
 } from "../../actions";
 let toastId = null;
@@ -46,7 +44,6 @@ const addHoureDiscountLogic = createLogic({
       return;
     } else {
       logger(result);
-      console.log("result", result.data);
       dispatch(
         getHoureDiscountSuccess({
           data: [result.data, ...data],
@@ -162,7 +159,7 @@ const updateHoureDiscountLogic = createLogic({
     } else {
       logger(result);
       dispatch(getHoureDiscountSuccessById({ dataById: {} }));
-      let index = data.findIndex((item) => item._id === action.payload.cId);
+      let index = data.findIndex((item) => item._id === action.payload.discount_id);
       data[index] = result.data;
       dispatch(
         getHoureDiscountSuccess({ data: data, isLoading: false, updateReq: "End" })

@@ -31,18 +31,10 @@ class ListItems extends Component {
     this.state = {
       addItem: false,
       name: "",
-      description: "",
-      is_deleted: false,
-      food_type_ids: [],
-      is_web: false,
-      is_tw: false,
-      is_discount_applied: false,
-      order: 0,
-      online_price: 0,
-      table_price: 0,
       selectRowId: "",
       selectRowClick: 0,
       filterType: [],
+      filterData: {},
       updateItemData: {
         name: "",
         category_id: "",
@@ -74,9 +66,7 @@ class ListItems extends Component {
     };
   }
   componentDidMount() {
-    this.props.getItemsDate();
-    // this.props.getFilterTypeDate();
-    // this.props.getFoodTypesDate();
+    this.props.getItemsDate({ panel_type: "E-COM" });
   }
   componentDidUpdate({
     ItemsReducerData,
@@ -84,6 +74,7 @@ class ListItems extends Component {
     FoodTypeReducerData,
   }) {
     let filterType = [];
+    let filterData = {};
     if (
       FilterTypeData &&
       FilterTypeData.updateReq &&
@@ -112,19 +103,10 @@ class ListItems extends Component {
             }
           }
           filterType.push({ id, fiterTypeName, options });
+          filterData = { ...filterData, [fiterTypeName]: [] };
         }
       }
-      // let allergyData =
-      //   FilterTypeData &&
-      //   FilterTypeData.data &&
-      //   FilterTypeData.data.filter((item) => item.name === "allergy")[0];
-
-      // console.log("allergyData", allergyData, FilterTypeData.data);
-
-      // this.setState({
-      //   allergyData: allergyData ? allergyData.filter_data : [],
-      // });
-      this.setState({ filterType });
+      this.setState({ filterType, filterData });
     }
     if (
       FoodTypeReducerData &&
@@ -169,7 +151,7 @@ class ListItems extends Component {
         is_deleted: false,
         description: "",
         selectRowId: data && data._id,
-        selectRowClick: this.state.addCategory ? 2 : 1,
+        selectRowClick: this.state.addItem ? 2 : 1,
         updateItemData: updateItemData,
       });
     }
@@ -196,40 +178,78 @@ class ListItems extends Component {
     });
   };
 
-  onSelect = (selectedList, filterTypeName) => {
-    const { updateItemData, selectRowId } = this.state;
-    let ids = [];
-    for (let i = 0; i < selectedList.length; i++) {
-      ids.push(selectedList[i].id);
-    }
-    this.props.onUpdateItems({
-      filters: { [filterTypeName]: ids },
-      item_id: selectRowId,
-    });
-    console.log("selectedList, selectedItem", selectedList, filterTypeName);
-  };
-  onSelectFoodType = (selectedList, name) => {
+  onSelect = (selectedList, selectedItem, filterTypeName, oldFilterData) => {
     const { selectRowId } = this.state;
-    let foodTypeIds = [];
-    for (let i = 0; i < selectedList.length; i++) {
-      foodTypeIds.push(selectedList[i].id);
-    }
+    // let ids = [];
+    // for (let i = 0; i < selectedList.length; i++) {
+    //   ids.push(selectedList[i].id);
+    // }
     this.props.onUpdateItems({
-      food_type_ids: foodTypeIds,
+      filters: {
+        ...oldFilterData,
+        [filterTypeName]: oldFilterData[filterTypeName]
+          ? [...oldFilterData[filterTypeName], selectedItem.id]
+          : [selectedItem.id],
+      },
       item_id: selectRowId,
     });
-    this.setState({
-      food_type_ids: selectedList,
+  };
+  onRemove = (selectedList, removedItem, filterTypeName, oldFilterData) => {
+    const { selectRowId } = this.state;
+    let filterData = oldFilterData;
+    let index = filterData[filterTypeName].findIndex(
+      (item) => item === removedItem.id
+    );
+    filterData[filterTypeName].splice(index, 1);
+    this.props.onUpdateItems({
+      filters: filterData,
+      item_id: selectRowId,
+    });
+  };
+  onSelectFoodType = (selectedList, selectedItem, foodTypeIds) => {
+    const { selectRowId } = this.state;
+    // let foodTypeIds = [];
+    // for (let i = 0; i < selectedList.length; i++) {
+    //   foodTypeIds.push(selectedList[i].id);
+    // }
+    this.props.onUpdateItems({
+      food_type_ids: [...foodTypeIds, selectedItem.id],
+      item_id: selectRowId,
+    });
+    // this.setState({
+    //   food_type_ids: selectedList,
+    // });
+  };
+  onRemoveFoodType = (selectedList, removedItem, foodTypeIds) => {
+    const { selectRowId } = this.state;
+    let foodData = foodTypeIds;
+    let index = foodData.findIndex((i) => i === removedItem.id);
+    foodData.splice(index, 1);
+    this.props.onUpdateItems({
+      food_type_ids: foodData,
+      item_id: selectRowId,
     });
   };
 
-  onRemove = (selectedList, removedItem) => {
-    console.log("selectedList, removedItem", selectedList, removedItem);
-  };
-
-  getFilterName = (data) => {
-    console.log("data", data);
-    return true;
+  getFilterName = (name, ids) => {
+    const { filterType } = this.state;
+    let filterName = "";
+    if (filterType.length) {
+      let obj = filterType.filter((i) => i.fiterTypeName === name)[0];
+      let objOptions = {};
+      ids.map((item, ind) => {
+        objOptions = obj.options.filter((i) => i.id === item)[0];
+        filterName +=
+          ind === 0
+            ? objOptions && objOptions.name
+              ? objOptions.name
+              : ""
+            : objOptions && objOptions.name
+            ? ", " + objOptions.name
+            : "";
+      });
+    }
+    return filterName;
   };
   getFoodTypeName = (foodTypeIds) => {
     const { foodTypeData } = this.state;
@@ -281,8 +301,11 @@ class ListItems extends Component {
       selectRowClick,
       updateItemData,
       foodTypeData,
+      filterType,
+      filterData,
     } = this.state;
     let food_type_ids = [];
+    let filterTypeData = filterData;
     if (
       item &&
       item.food_type_ids &&
@@ -299,11 +322,40 @@ class ListItems extends Component {
         });
       });
     }
+    if (item && item.filters && filterType && filterType.length) {
+      for (let i = 0; i < filterType.length; i++) {
+        let ids =
+          item.filters && item.filters[filterType[i].fiterTypeName]
+            ? item.filters[filterType[i].fiterTypeName]
+            : [];
+        if (ids.length && filterType[i].options.length) {
+          let optionData = [];
+          let obj = {};
+          ids.map((item) => {
+            obj = filterType[i].options.filter((i) => i.id === item)[0];
+            optionData.push({
+              name: obj && obj.name ? obj.name : "",
+              id: obj && obj.id ? obj.id : "",
+            });
+          });
+          filterTypeData = {
+            ...filterTypeData,
+            [filterType[i].fiterTypeName]: optionData,
+          };
+        }else{
+          filterTypeData = {
+            ...filterTypeData,
+            [filterType[i].fiterTypeName]: [],
+          }
+        }
+      }
+    }
     this.setState({
       selectRowId: item._id,
-      addCategory: false,
+      addItem: false,
       selectRowClick: selectRowId === item._id ? selectRowClick + 1 : 1,
       food_type_ids,
+      filterData: filterTypeData,
       updateItemData:
         selectRowId === item._id
           ? updateItemData
@@ -327,29 +379,21 @@ class ListItems extends Component {
       foodTypeOptions,
       food_type_ids,
       filterType,
+      filterData,
     } = this.state;
-    const {
-      ItemsReducerData,
-      FilterTypeData,
-      FoodTypeReducerData,
-      subCategoryId,
-      pannelType,
-      categoryID,
-    } = this.props;
-
-    console.log("filterType", filterType);
+    const { ItemsReducerData, subCategoryId, pannelType, categoryID } =
+      this.props;
     return (
       <>
         <CCard>
           <CCardHeader className="d-flex  flex-row justify-content-between">
-            {" "}
             <h6>
-              <i class="fas fa-list-alt mr-2"></i>List Of Items
+              <i className="fas fa-list-alt mr-2"></i>List Of Items
             </h6>
             <div>
               <CTooltip content="remove">
                 <CButton className="btn-youtube text-white mr-2" size="sm">
-                  <i class="fas fa-minus text-white" />
+                  <i className="fas fa-minus text-white" />
                 </CButton>
               </CTooltip>
               <CButton
@@ -365,7 +409,7 @@ class ListItems extends Component {
                   })
                 }
               >
-                <i class="fas fa-plus" />
+                <i className="fas fa-plus" />
               </CButton>
 
               <CTooltip content="Add Bulk">
@@ -377,7 +421,7 @@ class ListItems extends Component {
                     this.props.modalOpenRequest({ bulkCategoryModalOpen: true })
                   }
                 >
-                  <i class="fas fa-file-download"></i>
+                  <i className="fas fa-file-download"></i>
                 </CButton>
               </CTooltip>
             </div>
@@ -385,7 +429,7 @@ class ListItems extends Component {
           <CCardBody>
             <DragDropContext onDragEnd={this.onDragEnd}>
               <div className="table-responsive table1div">
-                <table class="table table-bordered table-sm">
+                <table className="table table-bordered table-sm">
                   <thead className="table1header">
                     <tr>
                       <th scope="col">S.no</th>
@@ -395,26 +439,23 @@ class ListItems extends Component {
                       <th scope="col">panel_type</th>
 
                       <>
-                        {FilterTypeData &&
-                        FilterTypeData.data &&
-                        FilterTypeData.data.length
-                          ? FilterTypeData.data.map((item, index) => {
-                              return <th scope="col">{item.name}</th>;
+                        {filterType && filterType.length
+                          ? filterType.map((item, index) => {
+                              return <th scope="col">{item.fiterTypeName}</th>;
                             })
                           : null}
                       </>
                       <th scope="col">Food Type Selection</th>
 
-                      <th scope="col">Type</th>
+                      <th scope="col">Options</th>
                       <th scope="col">online price</th>
                       <th scope="col">table price</th>
                       <th scope="col">tw price</th>
                       <th scope="col">BuyOne GetOne</th>
                       <th scope="col">half price</th>
                       <th scope="col">Tax</th>
-                      <th scope="col">Not For Web</th>
-
-                      <th scope="col">Not For TW</th>
+                      <th scope="col">For Web</th>
+                      <th scope="col">For TW</th>
                       <th scope="col">Discount</th>
                       <th scope="col">Action</th>
                     </tr>
@@ -428,14 +469,7 @@ class ListItems extends Component {
                         <>
                           {addItem ? (
                             <tr>
-                              <td>
-                                <input
-                                  className="w-100"
-                                  type="number"
-                                  name="order"
-                                  disabled
-                                />
-                              </td>
+                              <td></td>
                               <td>
                                 <input
                                   className="w-100"
@@ -453,63 +487,75 @@ class ListItems extends Component {
                                       category_id: categoryID,
                                       sub_category_id: subCategoryId,
                                       panel_type: pannelType,
-                                      filters: {},
-                                      food_type_ids: [],
-                                      description: "",
-                                      online_price: 0,
-                                      table_price: 0,
-                                      tw_price: 0,
-                                      is_web: true,
-                                      is_tw: true,
-                                      is_discount_applied: true,
-                                      auto_discount: true,
-                                      is_deleted: true,
-                                      is_removed: true,
-                                      buy_one_get_one: true,
-                                      half_price: true,
-                                      has_tax: true,
-                                      item_type: "Regular",
-                                      options: {},
-                                      order: 0,
                                     })
                                   }
                                 />
                               </td>
                               <td>{this.getCategoryName(categoryID)}</td>
-
                               <td>{this.getSubCategoryName(subCategoryId)}</td>
-
                               <td>{pannelType && pannelType}</td>
+                              <>
+                                {filterType && filterType.length
+                                  ? filterType.map((item, index) => {
+                                      return <td></td>;
+                                    })
+                                  : null}
+                              </>
                               <td></td>
-
-                              <td></td>
-
-                              <td></td>
-
-                              <td></td>
-
-                              <td></td>
-                              <td></td>
-
-                              <td></td>
-
-                              <td></td>
-
+                              <td>Regular</td>
                               <td></td>
                               <td></td>
                               <td></td>
-
-                              <td></td>
-
-                              <td></td>
-                              <td></td>
-
+                              <td>
+                                <CSwitch
+                                  className={"mx-1"}
+                                  variant={"3d"}
+                                  checked={false}
+                                />
+                              </td>
+                              <td>
+                                <CSwitch
+                                  className={"mx-1"}
+                                  variant={"3d"}
+                                  checked={false}
+                                />
+                              </td>
+                              <td>
+                                <CSwitch
+                                  className={"mx-1"}
+                                  variant={"3d"}
+                                  checked={false}
+                                />
+                              </td>
+                              <td>
+                                <CSwitch
+                                  className={"mx-1"}
+                                  variant={"3d"}
+                                  checked={true}
+                                />
+                              </td>
+                              <td>
+                                <CSwitch
+                                  className={"mx-1"}
+                                  variant={"3d"}
+                                  checked={true}
+                                />
+                              </td>
+                              <td>
+                                <CSwitch
+                                  className={"mx-1"}
+                                  variant={"3d"}
+                                  checked={false}
+                                />
+                              </td>
                               <td></td>
                               <td>
                                 <div className="d-flex flex-row text-center">
                                   <CBadge
                                     className={`${
-                                      !is_deleted ? "bg1" : "bg-secondary"
+                                      !is_deleted
+                                        ? "bg1"
+                                        : "bg-secondary text-dark"
                                     } text-white px-1 pt-1 pb-1`}
                                   >
                                     Enable
@@ -519,7 +565,7 @@ class ListItems extends Component {
                                     className={`${
                                       is_deleted
                                         ? "btn-youtube"
-                                        : "bg-secondary"
+                                        : "bg-secondary text-dark"
                                     } text-white px-1 pt-1 pb-1 ml-1`}
                                   >
                                     Disable
@@ -590,79 +636,105 @@ class ListItems extends Component {
                                             item.sub_category_id
                                           )}
                                         </td>
-                                        <td>{pannelType && pannelType}</td>
+                                        <td>{item && item.panel_type}</td>
                                         {selectRowId === item._id &&
-                                        selectRowClick > 1 ? (
-                                          filterType.length ? (
-                                            filterType.map((filter) => {
+                                        selectRowClick > 1
+                                          ? filterType.length
+                                            ? filterType.map((filter) => {
+                                                return (
+                                                  <td>
+                                                    <Multiselect
+                                                      selectedValues={
+                                                        filterData[
+                                                          filter.fiterTypeName
+                                                        ]
+                                                      }
+                                                      options={filter.options}
+                                                      onSelect={(
+                                                        selectedList,
+                                                        selectedItem
+                                                      ) =>
+                                                        this.onSelect(
+                                                          selectedList,
+                                                          selectedItem,
+                                                          filter.fiterTypeName,
+                                                          item.filters
+                                                        )
+                                                      }
+                                                      onRemove={(
+                                                        selectedList,
+                                                        removedItem
+                                                      ) =>
+                                                        this.onRemove(
+                                                          selectedList,
+                                                          removedItem,
+                                                          filter.fiterTypeName,
+                                                          item.filters
+                                                        )
+                                                      }
+                                                      displayValue="name"
+                                                      showCheckbox={true}
+                                                      id="css_custom"
+                                                      style={{
+                                                        chips: {
+                                                          display: "none",
+                                                        },
+                                                        searchBox: {
+                                                          border: "none",
+                                                          borderBottom:
+                                                            "1px solid #19c133",
+                                                          borderRadius: "0px",
+                                                          background: "#fff",
+                                                        },
+                                                      }}
+                                                    />
+                                                  </td>
+                                                );
+                                              })
+                                            : null
+                                          : filterType.length
+                                          ? filterType.map((filter) => {
                                               return (
                                                 <td>
-                                                  <Multiselect
-                                                    options={filter.options}
-                                                    onSelect={(selectedList) =>
-                                                      this.onSelect(
-                                                        selectedList,
-                                                        filter.fiterTypeName
+                                                  {item.filters &&
+                                                  item.filters[
+                                                    filter.fiterTypeName
+                                                  ]
+                                                    ? this.getFilterName(
+                                                        filter.fiterTypeName,
+                                                        item.filters[
+                                                          filter.fiterTypeName
+                                                        ]
                                                       )
-                                                    }
-                                                    displayValue="name"
-                                                    showCheckbox={true}
-                                                    id="css_custom"
-                                                    style={{
-                                                      chips: {
-                                                        display: "none",
-                                                      },
-                                                      searchBox: {
-                                                        border: "none",
-                                                        "border-bottom":
-                                                          "1px solid #19c133",
-                                                        "border-radius": "0px",
-                                                        background: "#fff",
-                                                      },
-                                                    }}
-                                                  />
+                                                    : ""}
                                                 </td>
                                               );
                                             })
-                                          ) : (
-                                            <td></td>
-                                          )
-                                        ) : filterType.length ? (
-                                          filterType.map((filter) => {
-                                            return (
-                                              <td>
-                                                {item.filters &&
-                                                item.filters[
-                                                  filter.fiterTypeName
-                                                ]
-                                                  ? this.getFilterName(
-                                                      item.filters[
-                                                        filter.fiterTypeName
-                                                      ]
-                                                    )
-                                                  : ""}
-                                              </td>
-                                            );
-                                          })
-                                        ) : (
-                                          <td></td>
-                                        )}
+                                          : null}
                                         <td>
                                           {selectRowId === item._id &&
                                           selectRowClick > 1 ? (
                                             <Multiselect
                                               options={foodTypeOptions}
                                               selectedValues={food_type_ids}
-                                              onSelect={(selectedList) =>
+                                              onSelect={(
+                                                selectedList,
+                                                selectedItem
+                                              ) =>
                                                 this.onSelectFoodType(
                                                   selectedList,
-                                                  "foodTypeData"
+                                                  selectedItem,
+                                                  item.food_type_ids
                                                 )
                                               }
-                                              onRemove={(selectedList) =>
-                                                this.onRemove(
+                                              onRemove={(
+                                                selectedList,
+                                                removedItem
+                                              ) =>
+                                                this.onRemoveFoodType(
                                                   selectedList,
-                                                  "foodTypeData"
+                                                  removedItem,
+                                                  item.food_type_ids
                                                 )
                                               }
                                               displayValue="name"
@@ -672,9 +744,9 @@ class ListItems extends Component {
                                                 chips: { display: "none" },
                                                 searchBox: {
                                                   border: "none",
-                                                  "border-bottom":
+                                                  borderBottom:
                                                     "1px solid #19c133",
-                                                  "border-radius": "0px",
+                                                  borderRadius: "0px",
                                                   background: "#fff",
                                                 },
                                               }}
@@ -692,26 +764,7 @@ class ListItems extends Component {
                                         </td>
 
                                         <td>
-                                          <select
-                                            name="item_type"
-                                            className="mt-2 select1"
-                                          >
-                                            <option value="0">
-                                              Please One
-                                            </option>
-                                            <option value="Regular">
-                                              Regular
-                                            </option>
-                                            <option value="Set-Item">
-                                              Set-Item
-                                            </option>
-                                            <option value="Relevant">
-                                              Relevant
-                                            </option>
-                                            <option value="Option">
-                                              Option
-                                            </option>
-                                          </select>
+                                          
                                         </td>
                                         <td>
                                           {selectRowId === item._id &&
@@ -812,11 +865,18 @@ class ListItems extends Component {
                                             name="buy_one_get_one"
                                             checked={item.buy_one_get_one}
                                             onChange={(e) =>
-                                              this.props.onUpdateItems({
-                                                item_id: selectRowId,
-                                                buy_one_get_one:
-                                                  e.target.checked,
-                                              })
+                                              this.setState(
+                                                {
+                                                  selectRowId: item._id,
+                                                  selectRowClick: 1,
+                                                },
+                                                () =>
+                                                  this.props.onUpdateItems({
+                                                    item_id: item._id,
+                                                    buy_one_get_one:
+                                                      e.target.checked,
+                                                  })
+                                              )
                                             }
                                           />
                                         </td>
@@ -827,10 +887,18 @@ class ListItems extends Component {
                                             name="half_price"
                                             checked={item.half_price}
                                             onChange={(e) =>
-                                              this.props.onUpdateItems({
-                                                item_id: selectRowId,
-                                                half_price: e.target.checked,
-                                              })
+                                              this.setState(
+                                                {
+                                                  selectRowId: item._id,
+                                                  selectRowClick: 1,
+                                                },
+                                                () =>
+                                                  this.props.onUpdateItems({
+                                                    item_id: item._id,
+                                                    half_price:
+                                                      e.target.checked,
+                                                  })
+                                              )
                                             }
                                           />
                                         </td>
@@ -841,10 +909,17 @@ class ListItems extends Component {
                                             name="has_tax"
                                             checked={item.has_tax}
                                             onChange={(e) =>
-                                              this.props.onUpdateItems({
-                                                item_id: selectRowId,
-                                                has_tax: e.target.checked,
-                                              })
+                                              this.setState(
+                                                {
+                                                  selectRowId: item._id,
+                                                  selectRowClick: 1,
+                                                },
+                                                () =>
+                                                  this.props.onUpdateItems({
+                                                    item_id: item._id,
+                                                    has_tax: e.target.checked,
+                                                  })
+                                              )
                                             }
                                           />
                                         </td>
@@ -856,10 +931,17 @@ class ListItems extends Component {
                                             name="is_web"
                                             checked={item.is_web}
                                             onChange={(e) =>
-                                              this.props.onUpdateItems({
-                                                item_id: selectRowId,
-                                                is_web: e.target.checked,
-                                              })
+                                              this.setState(
+                                                {
+                                                  selectRowId: item._id,
+                                                  selectRowClick: 1,
+                                                },
+                                                () =>
+                                                  this.props.onUpdateItems({
+                                                    item_id: item._id,
+                                                    is_web: e.target.checked,
+                                                  })
+                                              )
                                             }
                                           />
                                         </td>
@@ -870,10 +952,17 @@ class ListItems extends Component {
                                             name="is_tw"
                                             checked={item.is_tw}
                                             onChange={(e) =>
-                                              this.props.onUpdateItems({
-                                                item_id: selectRowId,
-                                                is_tw: e.target.checked,
-                                              })
+                                              this.setState(
+                                                {
+                                                  selectRowId: item._id,
+                                                  selectRowClick: 1,
+                                                },
+                                                () =>
+                                                  this.props.onUpdateItems({
+                                                    item_id: item._id,
+                                                    is_tw: e.target.checked,
+                                                  })
+                                              )
                                             }
                                           />
                                         </td>
@@ -884,11 +973,18 @@ class ListItems extends Component {
                                             name="is_discount_applied"
                                             checked={item.is_discount_applied}
                                             onChange={(e) =>
-                                              this.props.onUpdateItems({
-                                                item_id: selectRowId,
-                                                is_discount_applied:
-                                                  e.target.checked,
-                                              })
+                                              this.setState(
+                                                {
+                                                  selectRowId: item._id,
+                                                  selectRowClick: 1,
+                                                },
+                                                () =>
+                                                  this.props.onUpdateItems({
+                                                    item_id: item._id,
+                                                    is_discount_applied:
+                                                      e.target.checked,
+                                                  })
+                                              )
                                             }
                                           />
                                         </td>
@@ -899,13 +995,20 @@ class ListItems extends Component {
                                                 className={`${
                                                   !item.is_deleted
                                                     ? "bg1"
-                                                    : "bg-secondary"
+                                                    : "bg-secondary text-dark"
                                                 } text-white px-1`}
                                                 onClick={() =>
-                                                  this.props.onUpdateItems({
-                                                    is_deleted: false,
-                                                    item_id: selectRowId,
-                                                  })
+                                                  this.setState(
+                                                    {
+                                                      selectRowId: item._id,
+                                                      selectRowClick: 1,
+                                                    },
+                                                    () =>
+                                                      this.props.onUpdateItems({
+                                                        is_deleted: false,
+                                                        item_id: item._id,
+                                                      })
+                                                  )
                                                 }
                                               >
                                                 Enable
@@ -916,13 +1019,20 @@ class ListItems extends Component {
                                                 className={`${
                                                   item.is_deleted
                                                     ? "btn-youtube"
-                                                    : "bg-secondary"
+                                                    : "bg-secondary text-dark"
                                                 } text-white px-1 ml-1`}
                                                 onClick={() =>
-                                                  this.props.onUpdateItems({
-                                                    is_deleted: true,
-                                                    item_id: selectRowId,
-                                                  })
+                                                  this.setState(
+                                                    {
+                                                      selectRowId: item._id,
+                                                      selectRowClick: 1,
+                                                    },
+                                                    () =>
+                                                      this.props.onUpdateItems({
+                                                        is_deleted: true,
+                                                        item_id: item._id,
+                                                      })
+                                                  )
                                                 }
                                               >
                                                 Disable
@@ -937,7 +1047,7 @@ class ListItems extends Component {
                               })
                             ) : (
                               <tr>
-                                <td colspan="22">
+                                <td colSpan="22">
                                   <h6>
                                     {" "}
                                     <i class="fas fa-exclamation-triangle text-danger mr-2" />
@@ -948,7 +1058,7 @@ class ListItems extends Component {
                             )
                           ) : (
                             <tr>
-                              <td colspan="22">
+                              <td colSpan="22">
                                 <Loader />
                               </td>
                             </tr>

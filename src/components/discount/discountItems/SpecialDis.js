@@ -1,17 +1,16 @@
 import React, { Component } from "react";
 import {
-  CCol,
-  CRow,
   CButton,
   CCard,
   CCardBody,
   CCardHeader,
   CTooltip,
   CBadge,
-  CCollapse,
 } from "@coreui/react";
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { connect } from "react-redux";
+import moment from 'moment';
 import {
   addDayDiscountRequest,
   getDayDiscountRequest,
@@ -23,7 +22,7 @@ class SpecialDis extends Component {
     this.state = {
       discount: "",
       type: "FLAT",
-      day_time: {},
+      discount_date: new Date(),
       min_order_value: 0,
       is_deleted: true,
       is_removed: true,
@@ -73,22 +72,37 @@ class SpecialDis extends Component {
       },
     });
   };
+  keypressHandler = event => {
+    if (event.key === "Enter") {
+      this.onAddDiscount();
+    }
+  };
 
+  onAddDiscount = () => {
+    const { discount} = this.state;
+    let json = {
+      discount: parseFloat(discount),
+      type: "FLAT",
+      discount_type: "ONE_TIME_SUBSCRIBER",
+      payment_type: "CARD",
+      min_order_value: 0.0,
+      is_deleted: false,
+      is_removed: false,
+      discount_date: new Date()
+    }
+    this.props.onAddHoursDiscount(json)
+  }
 
   render() {
-
 
     const { DiscountReducerData } = this.props;
 
     const {
       discount,
       type,
-      day_time,
-      min_order_value,
       is_deleted,
-      is_removed,
       newRow,
-      updateData, selectRowId, selectRowClick
+      updateData, selectRowId, selectRowClick, discount_date
 
     } = this.state;
     return (
@@ -132,13 +146,13 @@ class SpecialDis extends Component {
               <table className="table table-bordered table-sm">
                 <thead className="table1header">
                   <tr>
-                    <th scope="col">Discount</th>
-                    <th scope="col">Type</th>
-                    <th scope="col">Date, Day & Time</th>
-                    <th scope="col">Minimum Order Value</th>
-                    <th scope="col">Discount Type</th>
-                    <th scope="col">Payment Type</th>
-                    <th scope="col">Action</th>
+                    <th className="td2">Discount</th>
+                    <th className="td2">Type</th>
+                    <th className="td2 px-3">Date_Day_Time</th>
+                    <th className="td2">Minimum_Order_Value</th>
+                    <th className="td2">Discount_Type</th>
+                    <th className="td2">Payment_Type</th>
+                    <th className="td2">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -155,23 +169,15 @@ class SpecialDis extends Component {
                                 e.target.value,
                             })
                           }
-                          onBlur={() =>
-                            this.props.onAddHoursDiscount({
-                              discount: parseFloat(discount),
-                              type: "FLAT",
-                              discount_type: "ONE_TIME_SUBSCRIBER",
-                              payment_type: "CARD",
-                              min_order_value: 0.0,
-                              is_deleted: false,
-                              is_removed: false,
-                            })
-                          }
+
+                          onKeyPress={event => this.keypressHandler(event)}
+                          onBlur={() => this.onAddDiscount()}
                         />
                       </td>
                       <td></td>
                       <td></td>
                       <td></td>
-                      
+
                       <td></td>
                       <td></td>
                       <td>
@@ -264,8 +270,35 @@ class SpecialDis extends Component {
                               itm.type
                             ) : null}
                           </td>
+                          <td>
 
-                          <td></td>
+                            {selectRowId === itm._id &&
+                              selectRowClick > 1 ? (
+                              <DatePicker
+                                selected={discount_date}
+                                timeInputLabel="Time:"
+                                dateFormat="yyyy/MM/dd h:mm aa"
+                                name="discount_date"
+                                value={discount_date}
+                                showTimeInput
+                                onChange={(e) => {
+                                  this.setState({
+                                    discount_date: new Date(e)
+                                  })
+                                }}
+                                onBlur={() =>
+                                  this.props.onUpdateData({
+                                    discount_date: discount_date,
+                                    discount_id: selectRowId,
+                                  })
+                                }
+
+                              />
+
+                            ) : itm.discount_date ? (
+                              moment(itm.discount_date).format('LLL')
+                            ) : null}
+                          </td>
                           <td >
                             {selectRowId === itm._id &&
                               selectRowClick > 1 ? (
@@ -357,7 +390,7 @@ class SpecialDis extends Component {
                                 <CBadge
                                   className={`${!itm.is_deleted
                                     ? "bg1"
-                                    : "bg-secondary"
+                                    : "bg-secondary text-dark"
                                     } text-white px-1`}
                                   onClick={() =>
                                     this.props.onUpdateData(
@@ -375,7 +408,7 @@ class SpecialDis extends Component {
                                 <CBadge
                                   className={`${itm.is_deleted
                                     ? "btn-youtube"
-                                    : "bg-secondary"
+                                    : "bg-secondary text-dark"
                                     } text-white px-1 ml-1`}
                                   onClick={() =>
                                     this.props.onUpdateData(

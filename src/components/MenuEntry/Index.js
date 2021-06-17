@@ -8,7 +8,6 @@ import {
   CTabContent,
   CTabPane,
   CCard,
-  CCardBody,
   CTabs,
   CCollapse,
   CTooltip,
@@ -17,8 +16,12 @@ import Category from "./Category";
 import SubCategory from "./SubCategory";
 import Item from "./Menu/Item";
 import Filter from "./Filter";
-import FoodType from "./FoodType";
-import { getCategoriesRequest, getSubCategoriesRequest } from "../../actions";
+// import FoodType from "./FoodType";
+import {
+  getCategoriesRequest,
+  getSubCategoriesRequest,
+  getListItemsRequest,
+} from "../../actions";
 import { connect } from "react-redux";
 class Index extends Component {
   constructor(props) {
@@ -36,40 +39,53 @@ class Index extends Component {
       this.setState({ pannelType: "E-COM" });
       this.props.getCategoryData({ panel_type: "E-COM" });
       this.props.getSubCategoryData({ panel_type: "E-COM" });
+      this.props.getItemsData({ panel_type: "E-COM" });
     } else if (idx === 1) {
       this.setState({ pannelType: "MERCHANDISE" });
       this.props.getCategoryData({ panel_type: "MERCHANDISE" });
       this.props.getSubCategoryData({ panel_type: "MERCHANDISE" });
+      this.props.getItemsData({ panel_type: "MERCHANDISE" });
     } else {
       this.setState({ pannelType: "CATERING" });
       this.props.getCategoryData({ panel_type: "CATERING" });
       this.props.getSubCategoryData({ panel_type: "CATERING" });
+      this.props.getItemsData({ panel_type: "CATERING" });
     }
     this.setState({ active: idx, show: true });
   };
   setCId = (data) => {
+    const { pannelType } = this.state;
     this.setState({ categoryID: data });
-    this.props.getSubCategoryData({ category_id: data ? data : "" });
+    this.props.getSubCategoryData({
+      category_id: data ? data : "",
+      panel_type: pannelType,
+    });
   };
   setSubCId = (data) => {
+    const { categoryID, pannelType } = this.state;
     this.setState({ subCategoryId: data });
+    this.props.getItemsData({
+      category_id: categoryID,
+      sub_category_id: data,
+      panel_type: pannelType,
+    });
   };
   render() {
     const { show, active, categoryID, pannelType, subCategoryId } = this.state;
     return (
       <>
-        <Filter />
-        <FoodType />
+        <Filter {...this.props} />
+        {/* <FoodType /> */}
         <CRow>
           <CCol xs="12">
             <CTabs
               activeTab={active}
               onActiveTabChange={(idx) => this.onTabChange(idx)}
             >
-              <CCard>
+              <CCard className="d-flex flex-row justify-content-between w-100">
                 <CNav
                   variant="tabs"
-                  className="d-flex flex-row justify-content-between"
+                  className="d-flex flex-row justify-content-between w-100"
                 >
                   <div className="d-flex flex-row">
                     <CNavItem>
@@ -95,7 +111,7 @@ class Index extends Component {
                     {this.state.show === true ? (
                       <CTooltip content="expanded">
                         <i
-                          className="fa fa-angle-down text1 ml-2"
+                          className="fas fa-caret-down text1 mr-2  fa-2x"
                           onClick={() =>
                             this.setState({
                               show: false,
@@ -106,7 +122,7 @@ class Index extends Component {
                       </CTooltip>
                     ) : (
                       <i
-                        className="fa fa-angle-right ml-2 mt-1"
+                        className="fas fa-caret-right fa-2x"
                         aria-hidden="true"
                         onClick={() =>
                           this.setState({
@@ -117,80 +133,102 @@ class Index extends Component {
                     )}
                   </div>
                 </CNav>
-                <CCollapse show={show}>
-                  <CCardBody>
-                    <CTabContent>
-                      <CTabPane>
-                        <CRow>
-                          <CCol xs="12">
-                            <Category
-                              pannelType={pannelType}
-                              setCId={this.setCId}
-                            />
-                          </CCol>
-
-                          <CCol xs="12">
-                            <SubCategory
-                              pannelType={pannelType}
-                              categoryID={categoryID}
-                              setSubCId={this.setSubCId}
-                            />
-                          </CCol>
-                        </CRow>
-                      </CTabPane>
-                      <CTabPane>
-                        <CRow>
-                          <CCol xs="12">
-                            <Category
-                              pannelType={pannelType}
-                              setCId={this.setCId}
-                            />
-                          </CCol>
-
-                          <CCol xs="12">
-                            <SubCategory
-                              pannelType={pannelType}
-                              categoryID={categoryID}
-                              setSubCId={this.setSubCId}
-                            />
-                          </CCol>
-                        </CRow>
-                      </CTabPane>
-                      <CTabPane>
-                        <CRow>
-                          <CCol xs="12">
-                            <Category
-                              pannelType={pannelType}
-                              setCId={this.setCId}
-                            />
-                          </CCol>
-
-                          <CCol xs="12">
-                            <SubCategory
-                              pannelType={pannelType}
-                              categoryID={categoryID}
-                              setSubCId={this.setSubCId}
-                            />
-                          </CCol>
-                        </CRow>
-                      </CTabPane>
-                    </CTabContent>
-                  </CCardBody>
-                </CCollapse>
               </CCard>
+              <CCollapse show={show}>
+                <CTabContent>
+                  <CTabPane>
+                    <CRow>
+                      <CCol xs="12">
+                        <Category
+                          pannelType={pannelType}
+                          setCId={this.setCId}
+                        />
+                      </CCol>
+
+                      <CCol xs="12">
+                        <SubCategory
+                          pannelType={pannelType}
+                          categoryID={categoryID}
+                          setSubCId={this.setSubCId}
+                        />
+                      </CCol>
+
+                      <CCol xs="12">
+                        <Item
+                          subCategoryId={subCategoryId}
+                          pannelType={pannelType}
+                          categoryID={categoryID}
+                        />
+                      </CCol>
+                    </CRow>
+                  </CTabPane>
+                  <CTabPane>
+                    <CRow>
+                      <CCol xs="12">
+                        <Category
+                          pannelType={pannelType}
+                          setCId={this.setCId}
+                        />
+                      </CCol>
+
+                      <CCol xs="12">
+                        <SubCategory
+                          pannelType={pannelType}
+                          categoryID={categoryID}
+                          setSubCId={this.setSubCId}
+                        />
+                      </CCol>
+
+                      <CCol xs="12">
+                        <Item
+                          subCategoryId={subCategoryId}
+                          pannelType={pannelType}
+                          categoryID={categoryID}
+                        />
+                      </CCol>
+                    </CRow>
+                  </CTabPane>
+                  <CTabPane>
+                    <CRow>
+                      <CCol xs="12">
+                        <Category
+                          pannelType={pannelType}
+                          setCId={this.setCId}
+                        />
+                      </CCol>
+
+                      <CCol xs="12">
+                        <SubCategory
+                          pannelType={pannelType}
+                          categoryID={categoryID}
+                          setSubCId={this.setSubCId}
+                        />
+                      </CCol>
+
+                      <CCol xs="12">
+                        <Item
+                          subCategoryId={subCategoryId}
+                          pannelType={pannelType}
+                          categoryID={categoryID}
+                        />
+                      </CCol>
+                    </CRow>
+                  </CTabPane>
+                </CTabContent>
+              </CCollapse>
             </CTabs>
           </CCol>
         </CRow>
 
-        <CRow>
-          <CCol>
+        {/* <CRow>
+          <CCol xs="12">
             <Item
               subCategoryId={subCategoryId}
               pannelType={pannelType}
               categoryID={categoryID}
             />
           </CCol>
-        </CRow>
+        </CRow> */}
       </>
     );
   }
@@ -203,6 +241,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     getSubCategoryData: (data) => {
       dispatch(getSubCategoriesRequest(data));
+    },
+    getItemsData: (data) => {
+      dispatch(getListItemsRequest(data));
     },
   };
 };
