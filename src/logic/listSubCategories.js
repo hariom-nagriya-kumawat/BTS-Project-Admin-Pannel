@@ -4,13 +4,8 @@ import { ApiHelper } from "../Helpers/ApiHelper";
 import { logger } from "../Helpers/Logger";
 import { DefaultErrorMessage } from "../config/Constants";
 import {
-  showLoader,
-  hideLoader,
   subCategoriesActions,
   getSubCategoriesSuccess,
-  getSubCategoriesRequest,
-  modalCloseRequest,
-  getSubCategoriesSuccessById,
 } from "../actions";
 let toastId = null;
 

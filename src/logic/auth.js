@@ -3,7 +3,6 @@ import { createLogic } from "redux-logic";
 import { ApiHelper } from "../Helpers/ApiHelper";
 import { logger } from "../Helpers/Logger";
 import { DefaultErrorMessage } from "../config/Constants";
-import { AppRoutes } from "../config/AppRoutes";
 import { authActions, loginSuccess, showLoader, hideLoader } from "../actions";
 let toastId = null;
 

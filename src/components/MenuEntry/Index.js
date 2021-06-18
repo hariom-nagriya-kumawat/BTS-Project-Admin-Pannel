@@ -14,7 +14,7 @@ import {
 } from "@coreui/react";
 import Category from "./Category";
 import SubCategory from "./SubCategory";
-import Item from "./Menu/Item";
+import Item from "./Item";
 import Filter from "./Filter";
 // import FoodType from "./FoodType";
 import {
@@ -75,7 +75,6 @@ class Index extends Component {
     return (
       <>
         <Filter {...this.props} />
-        {/* <FoodType /> */}
         <CRow>
           <CCol xs="12">
             <CTabs
@@ -219,16 +218,6 @@ class Index extends Component {
             </CTabs>
           </CCol>
         </CRow>
-
-        {/* <CRow>
-          <CCol xs="12">
-            <Item
-              subCategoryId={subCategoryId}
-              pannelType={pannelType}
-              categoryID={categoryID}
-            />
-          </CCol>
-        </CRow> */}
       </>
     );
   }

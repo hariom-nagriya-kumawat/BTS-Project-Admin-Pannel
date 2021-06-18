@@ -20,9 +20,9 @@ import {
   getFoodTypesRequest,
   addListItemsRequest,
   updateListItemsOrderRequest,
-} from "../../../actions";
-import Loader from "../../../containers/Loader/Loader";
-import BulkCategoryModal from "../ModalData/BulkCategory";
+} from "../../actions";
+import Loader from "../../containers/Loader/Loader";
+import BulkCategoryModal from "./ModalData/BulkCategory";
 import { Multiselect } from "multiselect-react-dropdown";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 class ListItems extends Component {

@@ -7,12 +7,8 @@ import {
   showLoader,
   hideLoader,
   modalCloseRequest,
-  addFilterTypeRequest,
   FilterAction,
-  getFilterTypeRequest,
   getFilterTypeSuccess,
-  addFilterDataRequest,
-  updateFilterRequest,
 } from "../actions";
 let toastId = null;
 

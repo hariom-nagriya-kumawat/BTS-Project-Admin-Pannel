@@ -8,7 +8,6 @@ import {
   showLoader,
   hideLoader,
   hourDiscountActions,
-  addHoureDiscountSuccess,
   getHoureDiscountSuccess,
   getHoureDiscountSuccessById,
 } from "../../actions";

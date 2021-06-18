@@ -7,10 +7,8 @@ import {
   showLoader,
   hideLoader,
   ListItemsActions,
-  getListItemsRequest,
   getListItemsSuccess,
   getListItemsSuccessById,
-  modalCloseRequest,
 } from "../actions";
 let toastId = null;
 

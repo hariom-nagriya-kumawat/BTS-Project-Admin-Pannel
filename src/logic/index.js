@@ -30,6 +30,6 @@ export default [
   ...DayDiscountLogic,
   ...DiscountCardLogic,
   ...OrderDiscountLogic,
-
+  
   redirectToLogic,
 ];

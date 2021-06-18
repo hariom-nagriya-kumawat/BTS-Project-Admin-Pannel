@@ -3,15 +3,11 @@ import { createLogic } from "redux-logic";
 import { ApiHelper } from "../../Helpers/ApiHelper";
 import { logger } from "../../Helpers/Logger";
 import { DefaultErrorMessage } from "../../config/Constants";
-import { AppRoutes } from "../../config/AppRoutes";
 import {
   showLoader,
   hideLoader,
   DayDiscountActions,
-  addDayDiscountSuccess,
   getDayDiscountSuccess,
-  getDayDiscountRequest,
-  modalCloseRequest,
   getDayDiscountSuccessById,
 } from "../../actions";
 let toastId = null;
