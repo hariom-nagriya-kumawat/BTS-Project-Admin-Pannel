@@ -31,20 +31,9 @@ class Category extends Component {
     this.state = {
       addCategory: false,
       name: "",
-      is_deleted: false,
+      description: "",
       selectRowId: "",
       selectRowClick: 0,
-      updateCategoryData: {
-        name: "",
-        description: "",
-        is_deleted: false,
-        allergy_ids: [],
-        food_type_ids: [],
-        is_web: false,
-        is_tw: false,
-        is_discount_applied: false,
-        order: 0,
-      },
       allergyData: [],
       allergyOptions: [],
       allergy_ids: [],
@@ -73,7 +62,9 @@ class Category extends Component {
       let allergyData =
         FilterTypeData &&
         FilterTypeData.data &&
-        FilterTypeData.data.filter((item) => item.name === "allergy" || item.name === "Allergy" )[0];
+        FilterTypeData.data.filter(
+          (item) => item.name === "Allergy" || item.name === "allergy"
+        )[0];
       if (
         allergyData &&
         allergyData.filter_data &&
@@ -125,22 +116,11 @@ class Category extends Component {
       CategorieReducerData.updateReq !==
         this.props.CategorieReducerData.updateReq
     ) {
-      let data = this.props.CategorieReducerData.data.filter(
-        (item) => item._id === this.state.selectRowId
-      )[0];
-      let updateCategoryData = {
-        name: data && data.name ? data.name : "",
-        is_deleted: data && data.is_deleted ? data.is_deleted : false,
-        description: data && data.description ? data.description : "",
-      };
       this.setState({
         addCategory: false,
         name: "",
-        is_deleted: false,
         description: "",
-        selectRowId: data && data._id,
-        selectRowClick: this.state.addCategory ? 2 : 1,
-        updateCategoryData: updateCategoryData,
+        selectRowClick: 1,
       });
     }
   }
@@ -227,13 +207,8 @@ class Category extends Component {
   };
 
   onRowClick = (item) => {
-    const {
-      selectRowId,
-      selectRowClick,
-      updateCategoryData,
-      allergyData,
-      foodTypeData,
-    } = this.state;
+    const { selectRowId, selectRowClick, allergyData, foodTypeData } =
+      this.state;
     let allergy_ids = [];
     let food_type_ids = [];
     if (
@@ -275,14 +250,8 @@ class Category extends Component {
       selectRowClick: selectRowId === item._id ? selectRowClick + 1 : 1,
       allergy_ids,
       food_type_ids,
-      updateCategoryData:
-        selectRowId === item._id
-          ? updateCategoryData
-          : {
-              name: item.name ? item.name : "",
-              description: item.description ? item.description : "",
-              is_deleted: item.is_deleted ? item.is_deleted : false,
-            },
+      name: item.name ? item.name : "",
+      description: item.description ? item.description : "",
     });
   };
 
@@ -328,25 +297,26 @@ class Category extends Component {
   onAddCategory = () => {
     const { pannelType } = this.props;
     const { name } = this.state;
-    this.props.onAddCategory({
-      name,
-      description: "",
-      is_deleted: false,
-      is_web: false,
-      is_discount_applied: false,
-      is_tw: false,
-      order: 0,
-      allergy_ids: [],
-      food_type_ids: [],
-      panel_type: pannelType,
-    });
+    if (name !== "") {
+      this.props.onAddCategory({
+        name,
+        panel_type: pannelType,
+      });
+    } else {
+      this.setState({
+        name: "",
+        addCategory: false,
+        selectRowId: "",
+        selectRowClick: 0,
+      });
+    }
   };
   render() {
     const { CategorieReducerData, pannelType } = this.props;
     const {
       addCategory,
       name,
-      is_deleted,
+      description,
       selectRowId,
       updateCategoryData,
       selectRowClick,
@@ -375,8 +345,9 @@ class Category extends Component {
                   this.setState({
                     addCategory: true,
                     selectRowId: "",
+                    selectRowClick: 0,
                     name: "",
-                    is_deleted: false,
+                    description: "",
                   })
                 }
               >
@@ -437,6 +408,11 @@ class Category extends Component {
                                       [e.target.name]: e.target.value,
                                     })
                                   }
+                                  onKeyPress={({ key }) =>
+                                    key === "Enter"
+                                      ? this.onAddCategory()
+                                      : null
+                                  }
                                   onBlur={() => this.onAddCategory()}
                                 />
                               </td>
@@ -469,21 +445,15 @@ class Category extends Component {
                               <td>
                                 <div className="d-flex flex-row text-center">
                                   <CBadge
-                                    className={`${
-                                      !is_deleted
-                                        ? "bg1"
-                                        : "bg-secondary text-dark"
-                                    } text-white px-1 pt-1 pb-1`}
+                                    className={"bg1 text-white px-1 pt-1 pb-1"}
                                   >
                                     Enable
                                   </CBadge>
 
                                   <CBadge
-                                    className={`${
-                                      is_deleted
-                                        ? "btn-youtube"
-                                        : "bg-secondary text-dark"
-                                    } text-white px-1 pt-1 pb-1 ml-1`}
+                                    className={
+                                      "bg-secondary text-dark px-1 pt-1 pb-1 ml-1"
+                                    }
                                   >
                                     Disable
                                   </CBadge>
@@ -501,14 +471,14 @@ class Category extends Component {
                                   <Draggable
                                     draggableId={item._id}
                                     index={index}
-                                    key={item._id}
+                                    key={index}
                                   >
                                     {(provided, snapshot) => (
                                       <tr
                                         ref={provided.innerRef}
                                         {...provided.draggableProps}
                                         {...provided.dragHandleProps}
-                                        key={index}
+                                        // key={index}
                                         className={
                                           selectRowId === item._id ? "bg2" : ""
                                         }
@@ -521,19 +491,26 @@ class Category extends Component {
                                               className="w-100"
                                               type="text"
                                               name="name"
-                                              value={updateCategoryData.name}
+                                              value={name}
                                               onChange={(e) =>
                                                 this.setState({
-                                                  updateCategoryData: {
-                                                    ...updateCategoryData,
-                                                    [e.target.name]:
-                                                      e.target.value,
-                                                  },
+                                                  [e.target.name]:
+                                                    e.target.value,
                                                 })
+                                              }
+                                              onKeyPress={({ key }) =>
+                                                key === "Enter"
+                                                  ? this.props.onUpdateCategories(
+                                                      {
+                                                        name: name,
+                                                        cId: selectRowId,
+                                                      }
+                                                    )
+                                                  : null
                                               }
                                               onBlur={() =>
                                                 this.props.onUpdateCategories({
-                                                  name: updateCategoryData.name,
+                                                  name: name,
                                                   cId: selectRowId,
                                                 })
                                               }
@@ -550,22 +527,27 @@ class Category extends Component {
                                               className="w-100"
                                               type="text"
                                               name="description"
-                                              value={
-                                                updateCategoryData.description
-                                              }
+                                              value={description}
                                               onChange={(e) =>
                                                 this.setState({
-                                                  updateCategoryData: {
-                                                    ...updateCategoryData,
-                                                    [e.target.name]:
-                                                      e.target.value,
-                                                  },
+                                                  [e.target.name]:
+                                                    e.target.value,
                                                 })
+                                              }
+                                              onKeyPress={({ key }) =>
+                                                key === "Enter"
+                                                  ? this.props.onUpdateCategories(
+                                                      {
+                                                        description:
+                                                          description,
+                                                        cId: selectRowId,
+                                                      }
+                                                    )
+                                                  : null
                                               }
                                               onBlur={() =>
                                                 this.props.onUpdateCategories({
-                                                  description:
-                                                    updateCategoryData.description,
+                                                  description: description,
                                                   cId: selectRowId,
                                                 })
                                               }

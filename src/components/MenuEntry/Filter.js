@@ -31,17 +31,11 @@ class Filter extends Component {
     super(props);
     this.state = {
       name: "",
-      is_deleted: false,
       selectRowId: "",
       selectRowClick: 0,
       filter_type_id: "",
       show: false,
       newRow: false,
-      updateData: {
-        name: "",
-        filter_type_id: "",
-        is_deleted: false,
-      },
     };
   }
   componentDidMount() {
@@ -59,29 +53,23 @@ class Filter extends Component {
         filter_type_id: "",
         newRow: false,
         name: "",
-        updateData: {
-          name: "",
-          is_deleted: false,
-          filter_type_id: "",
-        },
-        selectRowClick: this.state.newRow ? 2 : 1,
+        selectRowClick: 1,
       });
     }
   }
 
   addFilterData = () => {
-    const { name, is_deleted, filter_type_id } = this.state;
+    const { name, filter_type_id } = this.state;
     if (name !== "" && filter_type_id !== "") {
       let json = {
         name,
-        is_deleted,
+        is_deleted: false,
         filter_type_id,
       };
       this.props.addData(json);
     } else {
       this.setState({
         filter_type_id: "",
-        newRow: false,
         name: "",
         selectRowClick: 0,
         selectRowId: "",
@@ -90,26 +78,24 @@ class Filter extends Component {
   };
 
   onRowClick = (data, id) => {
-    const { selectRowId, selectRowClick, updateData } = this.state;
-    const { _id, name, is_deleted } = data;
+    const { selectRowId, selectRowClick } = this.state;
+    const { _id, name } = data;
     this.setState({
-      updateData: { name: name, is_deleted: is_deleted, filter_type_id: id },
+      name: name,
       selectRowId: _id,
       filter_type_id: id,
       selectRowClick: selectRowId === _id ? selectRowClick + 1 : 1,
     });
   };
+
   onUpdateData = () => {
-    const { updateData, selectRowId } = this.state;
-    if (
-      selectRowId &&
-      updateData &&
-      updateData.name !== "" &&
-      updateData.filter_type_id !== ""
-    )
-      this.props.updateFilterData({ ...updateData, FDId: selectRowId });
+    const { selectRowId, name, filter_type_id } = this.state;
+    if (selectRowId && name !== "" && filter_type_id !== "")
+      this.props.updateFilterData({ name, filter_type_id, FDId: selectRowId });
     else {
       this.setState({
+        name: "",
+        filter_type_id: "",
         selectRowId: "",
         selectRowClick: 0,
       });
@@ -129,6 +115,7 @@ class Filter extends Component {
       this.props.updateFilterRequest(json);
     }
   };
+
   inActivateFilterType = async (id) => {
     const { value } = await ConfirmBox({
       text: "Do you want to Disable status ?",
@@ -154,6 +141,7 @@ class Filter extends Component {
       this.props.updateFilterRequest(json);
     }
   };
+
   onDeleteFilterData = async () => {
     const { filter_type_id, selectRowId } = this.state;
     if (filter_type_id && selectRowId) {
@@ -172,10 +160,8 @@ class Filter extends Component {
   };
   render() {
     const { FilterTypeData } = this.props;
-
     const {
       name,
-      is_deleted,
       selectRowId,
       updateData,
       selectRowClick,
@@ -210,7 +196,6 @@ class Filter extends Component {
                   onClick={() =>
                     this.setState({
                       show: false,
-                      filter_type_id: "",
                     })
                   }
                 />
@@ -233,10 +218,10 @@ class Filter extends Component {
             {FilterTypeData.data && FilterTypeData.data.length
               ? FilterTypeData.data.map((item, index) => {
                   return (
-                    <CCol xs="12" sm="6">
+                    <CCol xs="12" sm="6" key={index}>
                       <CCard>
                         <CCardHeader className="d-flex flex-row justify-content-between">
-                          <h6>
+                          <h6 className="pt-1">
                             <i class="fas fa-list-alt mr-2"></i>List Of{" "}
                             {item.name}
                           </h6>
@@ -265,14 +250,10 @@ class Filter extends Component {
                                     : this.inActivateFilterType(item._id);
                                 }}
                               >
-                                {item.is_deleted ? (
-                                  <i class="fas fa-ban text-white"></i>
-                                ) : (
-                                  <i class="fas fa-ban text-white"></i>
-                                )}
+                                <i class="fas fa-ban text-white" />
                               </CButton>
                             </CTooltip>
-                            <CTooltip content="remove">
+                            {/* <CTooltip content="remove">
                               <CButton
                                 className="btn-youtube text-white ml-2"
                                 size="sm"
@@ -280,7 +261,7 @@ class Filter extends Component {
                               >
                                 <i class="fas fa-minus text-white" />
                               </CButton>
-                            </CTooltip>
+                            </CTooltip> */}
                             <CTooltip content="Add New">
                               <CButton
                                 className="bg1 text-white ml-2"
@@ -289,7 +270,9 @@ class Filter extends Component {
                                   this.setState({
                                     filter_type_id: item._id,
                                     newRow: true,
-                                    show: true,
+                                    name: "",
+                                    selectRowClick: 0,
+                                    selectRowId: "",
                                   });
                                 }}
                               >
@@ -335,42 +318,39 @@ class Filter extends Component {
                               <tbody>
                                 {newRow && filter_type_id === item._id ? (
                                   <tr>
-                                    <td className="w-25"></td>
+                                    <td className="w-25">-</td>
                                     <td className="w-50">
-                                      <form
-                                        onSubmit={() => this.addFilterData()}
-                                      >
-                                        <input
-                                          type="text"
-                                          name="name"
-                                          value={name}
-                                          onChange={(e) =>
-                                            this.setState({
-                                              [e.target.name]: e.target.value,
-                                            })
-                                          }
-                                          onBlur={() => this.addFilterData()}
-                                        />
-                                      </form>
+                                      <input
+                                        type="text"
+                                        name="name"
+                                        value={name}
+                                        onChange={(e) =>
+                                          this.setState({
+                                            [e.target.name]: e.target.value,
+                                          })
+                                        }
+                                        onKeyPress={({ key }) =>
+                                          key === "Enter"
+                                            ? this.addFilterData()
+                                            : null
+                                        }
+                                        onBlur={() => this.addFilterData()}
+                                      />
                                     </td>
                                     <td className="w-25">
                                       <div className="d-flex flex-row justify-content-center">
                                         <CBadge
-                                          className={`${
-                                            !is_deleted
-                                              ? "bg1"
-                                              : "bg-secondary text-dark"
-                                          } text-white px-1 pt-1 pb-1`}
+                                          className={
+                                            "bg1 text-white px-1 pt-1 pb-1 "
+                                          }
                                         >
                                           Enable
                                         </CBadge>
 
                                         <CBadge
-                                          className={`${
-                                            is_deleted
-                                              ? "btn-youtube"
-                                              : "bg-secondary text-dark"
-                                          } text-white px-1 pt-1 pb-1 ml-1`}
+                                          className={
+                                            "bg-secondary text-dark px-1 pt-1 pb-1 ml-1"
+                                          }
                                         >
                                           Disable
                                         </CBadge>
@@ -394,31 +374,31 @@ class Filter extends Component {
                                         <td className="w-50">
                                           {selectRowId === itm._id &&
                                           selectRowClick > 1 ? (
-                                            <form
-                                              onSubmit={() =>
-                                                this.onUpdateData()
+                                            // <form
+                                            //   onSubmit={() =>
+                                            //     this.onUpdateData()
+                                            //   }
+                                            // >
+                                            <input
+                                              className="w-100"
+                                              type="text"
+                                              name="name"
+                                              value={name}
+                                              onChange={(e) =>
+                                                this.setState({
+                                                  [e.target.name]:
+                                                    e.target.value,
+                                                })
                                               }
-                                            >
-                                              <input
-                                                className="w-100"
-                                                type="text"
-                                                name="name"
-                                                value={updateData.name}
-                                                onChange={(e) =>
-                                                  this.setState({
-                                                    updateData: {
-                                                      ...updateData,
-                                                      [e.target.name]:
-                                                        e.target.value,
-                                                    },
-                                                  })
-                                                }
-                                                onBlur={() =>
-                                                  this.onUpdateData()
-                                                }
-                                              />
-                                            </form>
-                                          ) : itm.name ? (
+                                              onKeyPress={({ key }) =>
+                                                key === "Enter"
+                                                  ? this.onUpdateData()
+                                                  : null
+                                              }
+                                              onBlur={() => this.onUpdateData()}
+                                            />
+                                          ) : // </form>
+                                          itm.name ? (
                                             itm.name
                                           ) : null}
                                         </td>
@@ -429,9 +409,9 @@ class Filter extends Component {
                                               <CBadge
                                                 className={`${
                                                   !itm.is_deleted
-                                                    ? "bg1"
+                                                    ? "bg1 text-white"
                                                     : "bg-secondary text-dark"
-                                                } text-white px-1`}
+                                                }  px-1`}
                                                 onClick={() => {
                                                   this.setState(
                                                     {
@@ -457,9 +437,9 @@ class Filter extends Component {
                                               <CBadge
                                                 className={`${
                                                   itm.is_deleted
-                                                    ? "btn-youtube"
+                                                    ? "btn-youtube text-white"
                                                     : "bg-secondary text-dark"
-                                                } text-white px-1 ml-1`}
+                                                }  px-1 ml-1`}
                                                 onClick={() => {
                                                   this.setState(
                                                     {
@@ -490,7 +470,6 @@ class Filter extends Component {
                                   <tr>
                                     <td colspan="5">
                                       <h6>
-                                        {" "}
                                         <i class="fas fa-exclamation-triangle text-danger mr-2" />
                                         Not Found
                                       </h6>

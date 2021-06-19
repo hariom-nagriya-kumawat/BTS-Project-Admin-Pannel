@@ -43,7 +43,7 @@ const addFoodTypesLogic = createLogic({
       if (!toast.isActive(toastId)) {
         toastId = toast.error(result.messages[0] || DefaultErrorMessage);
       }
-      dispatch(hideLoader());
+      // dispatch(hideLoader());
       done();
       return;
     } else {
@@ -64,7 +64,7 @@ const getFoodTypesLogic = createLogic({
   type: foodTypeActions.GET_FOODTYPE_REQUEST,
   cancelType: foodTypeActions.GET_FOODTYPE_FAILED,
   async process({ action }, dispatch, done) {
-    dispatch(getFoodTypesSuccess({ updateReq: "Start" }));
+    dispatch(getFoodTypesSuccess({ updateReq: "Start", isLoading: true }));
     let api = new ApiHelper();
     let result = await api.FetchFromServer(
       "",
@@ -78,14 +78,16 @@ const getFoodTypesLogic = createLogic({
       if (!toast.isActive(toastId)) {
         toastId = toast.error(result.messages[0] || DefaultErrorMessage);
       }
-      dispatch(getFoodTypesSuccess({ isLoading: false }));
+      dispatch(
+        getFoodTypesSuccess({ isLoading: false, updateReq: "End", data: [] })
+      );
       done();
       return;
     } else {
       logger(result);
       dispatch(
         getFoodTypesSuccess({
-          data: result.data?result.data:[],
+          data: result.data ? result.data : [],
           isLoading: false,
           updateReq: "End",
         })
@@ -134,8 +136,17 @@ const getFoodTypesByIdLogic = createLogic({
 const updateFoodTypesLogic = createLogic({
   type: foodTypeActions.UPDATE_FOODTYPE_REQUEST,
   cancelType: foodTypeActions.UPDATE_FOODTYPE_FAILED,
-  async process({ action }, dispatch, done) {
-    dispatch(showLoader());
+  async process({ action, getState }, dispatch, done) {
+    // dispatch(showLoader());
+    dispatch(
+      getFoodTypesSuccess({
+        updateReq: "Start",
+      })
+    );
+    let data =
+      getState().FoodTypeReducer && getState().FoodTypeReducer.data
+        ? getState().FoodTypeReducer.data
+        : [];
     let api = new ApiHelper();
     let result = await api.FetchFromServer(
       "",
@@ -149,15 +160,25 @@ const updateFoodTypesLogic = createLogic({
       if (!toast.isActive(toastId)) {
         toastId = toast.error(result.messages[0] || DefaultErrorMessage);
       }
-      dispatch(hideLoader());
+      // dispatch(hideLoader());
       done();
       return;
     } else {
       logger(result);
-      toastId = toast.success("Updated Successfully!");
-      dispatch(getFoodTypesSuccessById({ dataById: {} }));
-      dispatch(getFoodTypesRequest());
-      dispatch(hideLoader());
+      // toastId = toast.success("Updated Successfully!");
+      // dispatch(getFoodTypesSuccessById({ dataById: {} }));
+      // dispatch(getFoodTypesRequest());
+      // dispatch(hideLoader());
+      let index = data.findIndex(
+        (item) => item._id === action.payload.get("food_type_id")
+      );
+      data[index] = result.data;
+      dispatch(
+        getFoodTypesSuccess({
+          updateReq: "End",
+          data: data,
+        })
+      );
       done();
       return;
     }
@@ -169,7 +190,16 @@ const updateFoodTypesLogic = createLogic({
 const updateFoodTypesStatusLogic = createLogic({
   type: foodTypeActions.UPDATE_FOODTYPESTATUS_REQUEST,
   cancelType: foodTypeActions.UPDATE_FOODTYPESTATUS_FAILED,
-  async process({ action }, dispatch, done) {
+  async process({ action, getState }, dispatch, done) {
+    dispatch(
+      getFoodTypesSuccess({
+        updateReq: "Start",
+      })
+    );
+    let data =
+      getState().FoodTypeReducer && getState().FoodTypeReducer.data
+        ? getState().FoodTypeReducer.data
+        : [];
     let food_type_id = action.payload.food_type_id;
     delete action.payload.food_type_id;
     let api = new ApiHelper();
@@ -185,12 +215,20 @@ const updateFoodTypesStatusLogic = createLogic({
       if (!toast.isActive(toastId)) {
         toastId = toast.error(result.messages[0] || DefaultErrorMessage);
       }
-      dispatch(hideLoader());
+      // dispatch(hideLoader());
       done();
       return;
     } else {
       logger(result);
-      dispatch(getFoodTypesRequest());
+      let index = data.findIndex((item) => item._id === food_type_id);
+      data[index] = result.data;
+      dispatch(
+        getFoodTypesSuccess({
+          updateReq: "End",
+          data: data,
+        })
+      );
+      // dispatch(getFoodTypesRequest());
       done();
       return;
     }
@@ -200,8 +238,17 @@ const updateFoodTypesStatusLogic = createLogic({
 const addBulkFoodTypesLogic = createLogic({
   type: foodTypeActions.ADD_BULKFOODTYPE_REQUEST,
   cancelType: foodTypeActions.ADD_BULKFOODTYPE_FAILED,
-  async process({ action }, dispatch, done) {
+  async process({ action, getState }, dispatch, done) {
     dispatch(showLoader());
+    dispatch(
+      getFoodTypesSuccess({
+        updateReq: "Start",
+      })
+    );
+    let data =
+      getState().FoodTypeReducer && getState().FoodTypeReducer.data
+        ? getState().FoodTypeReducer.data
+        : [];
     let api = new ApiHelper();
     let result = await api.FetchFromServer(
       "",
@@ -222,7 +269,13 @@ const addBulkFoodTypesLogic = createLogic({
       logger(result);
       toastId = toast.success("Add Successfully!");
       dispatch(modalCloseRequest({ bulkFoodTypeModal: false }));
-      dispatch(getFoodTypesRequest());
+      dispatch(
+        getFoodTypesSuccess({
+          updateReq: "End",
+          data: [...result.data, data],
+        })
+      );
+      // dispatch(getFoodTypesRequest());
       dispatch(hideLoader());
       done();
     }

@@ -43,10 +43,10 @@ const addFilterTypeLogic = createLogic({
     } else {
       logger(result);
       toastId = toast.success("Add Filter Success!");
-      // dispatch(getFilterTypeRequest());
+      data.unshift({ ...result.data, filter_data: [] });
       dispatch(
         getFilterTypeSuccess({
-          data: [...data, { ...result.data, filter_data: [] }],
+          data: data,
           isLoading: false,
         })
       );
@@ -62,7 +62,7 @@ const getFilterTypeLogic = createLogic({
   type: FilterAction.GET_FILTER_REQUEST,
   cancelType: FilterAction.GET_FILTER_FAILED,
   async process({ action }, dispatch, done) {
-    dispatch(getFilterTypeSuccess({ updateReq: "Start" }));
+    dispatch(getFilterTypeSuccess({ updateReq: "Start", isLoading: true }));
     let api = new ApiHelper();
     let result = await api.FetchFromServer(
       "",
@@ -76,14 +76,16 @@ const getFilterTypeLogic = createLogic({
       if (!toast.isActive(toastId)) {
         toastId = toast.error(result.messages[0] || DefaultErrorMessage);
       }
-      dispatch(getFilterTypeSuccess({ isLoading: false }));
+      dispatch(
+        getFilterTypeSuccess({ isLoading: false, data: [], updateReq: "End" })
+      );
       done();
       return;
     } else {
       logger(result);
       dispatch(
         getFilterTypeSuccess({
-          data: result.data?result.data:[],
+          data: result.data ? result.data : [],
           isLoading: false,
           updateReq: "End",
         })
@@ -139,7 +141,7 @@ const addFilterDataLogic = createLogic({
         })
       );
       //   dispatch(modalCloseRequest({ addCalorieModalOpen: false }));
-      dispatch(hideLoader());
+      // dispatch(hideLoader());
       done();
     }
   },
