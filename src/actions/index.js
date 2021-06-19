@@ -12,6 +12,8 @@ export * from "./Discount/DayDiscount";
 export * from "./Discount/HourDiscount";
 export * from "./Discount/DiscountCard";
 export * from "./Discount/OrderDiscount";
+export * from "./Discount/ServiceDiscount";
+export * from "./Discount/DeliveryCharges";
 
 export const redirectTo = createAction("REDIRET_TO");
 
