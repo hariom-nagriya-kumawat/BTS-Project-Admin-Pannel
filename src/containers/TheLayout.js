@@ -10,7 +10,7 @@ const TheLayout = (props) => {
 
   return (
     <div className="c-app c-default-layout">
-      <TheSidebar {...props}/>
+      {/* <TheSidebar {...props}/> */}
       <div className="c-wrapper">
         <TheHeader {...props}/>
         <div className="c-body">

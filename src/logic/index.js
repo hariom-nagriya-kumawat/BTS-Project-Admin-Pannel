@@ -11,6 +11,8 @@ import { DayDiscountLogic } from "./Discount/DayDiscount";
 import { HoureDiscountLogic } from "./Discount/hourDiscount";
 import { DiscountCardLogic } from "./Discount/DiscountCard";
 import { OrderDiscountLogic } from "./Discount/OrderDiscount";
+import {ServiceDiscountLogic} from "./Discount/ServiceDiscount";
+import {DeliveryChargesLogic} from "./Discount/DeliveryCharges";
 export const redirectToLogic = createLogic({
   type: "REDIRET_TO",
   async process({ action }, dispatch, done) {
@@ -30,6 +32,7 @@ export default [
   ...DayDiscountLogic,
   ...DiscountCardLogic,
   ...OrderDiscountLogic,
-  
+  ...ServiceDiscountLogic,
+  ...DeliveryChargesLogic,
   redirectToLogic,
 ];
