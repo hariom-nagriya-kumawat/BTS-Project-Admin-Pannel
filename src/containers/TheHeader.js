@@ -46,8 +46,8 @@ const TheHeader = (props) => {
   };
 
   return (
-    <CHeader withSubheader>
-      <CToggler
+    <CHeader withSubheader className = "bg3">
+      {/* <CToggler
         inHeader
         className="ml-md-3 d-lg-none"
         onClick={toggleSidebarMobile}
@@ -56,29 +56,24 @@ const TheHeader = (props) => {
         inHeader
         className="ml-3 d-md-down-none"
         onClick={toggleSidebar}
-      />
+      /> */}
       <CHeaderBrand className="mx-auto d-lg-none" to="/">
         <CIcon name="logo" height="48" alt="Logo" />
       </CHeaderBrand>
 
       <CHeaderNav className="d-md-down-none mr-auto">
         <CHeaderNavItem className="px-3">
-          <CHeaderNavLink to="/dashboard">Dashboard</CHeaderNavLink>
+          <CHeaderNavLink to="/dashboard" className = "text-white">Better Tech Solution</CHeaderNavLink>
         </CHeaderNavItem>
-        {/* <CHeaderNavItem className="px-3">
-          <CHeaderNavLink to="/users">Users</CHeaderNavLink>
-        </CHeaderNavItem>
-        <CHeaderNavItem className="px-3">
-          <CHeaderNavLink>Settings</CHeaderNavLink>
-        </CHeaderNavItem> */}
+       
       </CHeaderNav>
 
-      {/* <CHeaderNav className="px-3">
+      <CHeaderNav className="px-3">
         <TheHeaderDropdownNotif />
         <TheHeaderDropdownTasks />
         <TheHeaderDropdownMssg />
         <TheHeaderDropdown />
-      </CHeaderNav> */}
+      </CHeaderNav>
 
       <CSubheader className="px-3 justify-content-between">
         <CBreadcrumbRouter
@@ -89,14 +84,14 @@ const TheHeader = (props) => {
           <CLink className="c-subheader-nav-link" href="#">
             <CIcon name="cil-speech" alt="Settings" />
           </CLink>
-          <CLink
+          {/* <CLink
             className="c-subheader-nav-link"
             aria-current="page"
             to="/dashboard"
           >
             <CIcon name="cil-graph" alt="Dashboard" />
             &nbsp;Dashboard
-          </CLink>
+          </CLink> */}
           <CLink className="c-subheader-nav-link" href="#">
             <CIcon name="cil-settings" alt="Settings" />
             &nbsp;Settings

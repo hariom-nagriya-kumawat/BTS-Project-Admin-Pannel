@@ -14,6 +14,8 @@ import { DayDiscountReducer } from "./Discount/ReducerDay";
 import { HourDiscountReducer } from "./Discount/ReducerHour";
 import { DiscountCardReducer } from "./Discount/DiscountCard";
 import { OrderDiscountReducer } from "./Discount/OrderCard";
+import {ServiceDiscountReducer} from "./Discount/ServiceCard";
+import {DeliveryChargesReducer} from "./Discount/DeliveryChargesCard";
 export const mainReducer = handleActions(
   {
     SHOW_LOADER: (state, action) => ({
@@ -42,6 +44,8 @@ const AppReducer = combineReducers({
   DayDiscountReducer,
   DiscountCardReducer,
   OrderDiscountReducer,
+  ServiceDiscountReducer,
+  DeliveryChargesReducer,
   routing: routerReducer,
 });
 

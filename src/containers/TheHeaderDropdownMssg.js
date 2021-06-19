@@ -18,7 +18,7 @@ const TheHeaderDropdownMssg = () => {
       direction="down"
     >
       <CDropdownToggle className="c-header-nav-link" caret={false}>
-        <CIcon name="cil-envelope-open" /><CBadge shape="pill" color="info">{itemsCount}</CBadge>
+        <CIcon name="cil-envelope-open" className = "text-white"/><CBadge shape="pill" color="info">{itemsCount}</CBadge>
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
         <CDropdownItem
