@@ -1,19 +1,17 @@
 import React, { Component } from "react";
 import {
-  CCol,
-  CRow,
   CButton,
   CCard,
   CCardBody,
   CCardHeader,
   CTooltip,
   CBadge,
-  CCollapse,
 } from "@coreui/react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Dropzone from "react-dropzone";
 import moment from 'moment';
+import { ConfirmBox } from "../../../Helpers/SweetAlert";
 import { connect } from "react-redux";
 import {
   addDiscountCardRequest,
@@ -47,7 +45,7 @@ class Voucher extends Component {
   componentDidMount() {
     this.props.getCardDiscountData({ "card_type": "VOUCHER" });
   }
-  componentDidUpdate = (DiscountReducerData) => {
+  componentDidUpdate = ({ DiscountReducerData }) => {
     if (
       DiscountReducerData &&
       DiscountReducerData.updateReq &&
@@ -56,8 +54,21 @@ class Voucher extends Component {
     ) {
       this.setState({
         newRow: false,
+        min_order_value: 0,
+        selectRowClick: 1,
+        tax: 0,
+        discount: "",
+        type: "",
+        min_order_value: 0,
+        is_deleted: false,
+        is_removed: false,
+        selectRowId: "",
+        discount_type: "",
+        payment_type: "",
         name: "",
-        selectRowClick: this.state.addCategory ? 2 : 1,
+        image: "",
+        price: 0,
+        amount: 0,
       })
     }
   }
@@ -70,6 +81,7 @@ class Voucher extends Component {
 
     this.setState({
       selectRowId: item._id,
+      discount:item.discount,
       newRow: false,
       imageUrl: selectRowId === item._id ? item.image : "",
       selectRowClick: selectRowId === item._id ? selectRowClick + 1 : 1,
@@ -118,25 +130,6 @@ class Voucher extends Component {
       this.onAddDiscount();
     }
   };
-
-  handleChange = (e) => {
-    const {
-      selectRowId,
-    } = this.state;
-    const { target } = e;
-    const { value, name } = target;
-    this.props.onUpdateData({
-      [name]: value,
-      discount_id: selectRowId,
-    })
-    this.setState({
-      [name]: value,
-      errors: {
-        ...this.state.errors,
-        [name]: false,
-      },
-    });
-  };
   onSelectFile = async (file) => {
     const { selectRowId } = this.state;
     file.map(async (data, i) => {
@@ -164,19 +157,51 @@ class Voucher extends Component {
   onDeleteImg = () => {
     this.setState({ image: "", imageUrl: "" });
   };
+  keypressHandler1 = event => {
+    if (event.key === "Enter") {
+      this.onUpdateData();
+    }
+  };
 
+  onUpdateData = () => {
+    const { name, discount, amount, min_order_value, price, selectRowId } = this.state;
+    this.props.onUpdateData({
+      discount: parseFloat(discount),
+      min_order_value: parseFloat(min_order_value),
+      price: parseFloat(price),
+      amount: parseFloat(amount),
+      name: name,
+      discount_id: selectRowId,
+      card_type: "VOUCHER",
+    })
+    this.setState({ newRow: false, selectRowClick: 1, })
+  }
+  onRemove = async () => {
+    const { selectRowId } = this.state;
+    const { value } = await ConfirmBox({
+      text: "Do you want to Remove ?",
+    });
+    if (value) {
+      this.props.onUpdateData(
+        {
+          is_removed: true,
+          discount_id: selectRowId,
+          card_type: "VOUCHER",
+
+        }
+      )
+
+    }
+  };
   render() {
     const { DiscountReducerData } = this.props;
     const {
       discount,
       type,
-      min_order_value,
       is_deleted,
       newRow,
       selectRowId, selectRowClick,
       name,
-      price,
-      amount,
       expiry_date,
       imageUrl,
     } = this.state;
@@ -194,13 +219,7 @@ class Voucher extends Component {
                   className="btn-youtube text-white ml-2"
                   size="sm"
                   onClick={() =>
-                    this.props.onUpdateData(
-                      {
-                        is_removed: true,
-                        discount_id: selectRowId,
-                      }
-                    )
-                  }
+                    this.onRemove()}
                 >
                   <i class="fas fa-minus text-white" />
                 </CButton>
@@ -228,10 +247,9 @@ class Voucher extends Component {
                     <th className="td2">Amount</th>
                     <th className="td2">Discount</th>
                     <th className="td2">Minimum_Order</th>
-
                     <th className="td2" >Expiry_Date_GiftCard</th>
                     <th className="td2">Type</th>
-                    <th className="td2">Discount_Type</th>
+                    {/* <th className="td2">Discount_Type</th> */}
                     <th className="td2">Payment_Type</th>
                     <th className="td2">Action</th>
                   </tr>
@@ -257,7 +275,7 @@ class Voucher extends Component {
                         />
                       </td>
 
-                      <td></td>
+                      {/* <td></td> */}
                       <td></td>
                       <td></td>
 
@@ -323,13 +341,9 @@ class Voucher extends Component {
                                         e.target.value,
                                     })
                                   }
+                                  onKeyPress={event => this.keypressHandler1(event)}
                                   onBlur={() =>
-                                    this.props.onUpdateData({
-                                      name: name,
-                                      discount_id: selectRowId,
-                                      card_type: "VOUCHER",
-                                    })
-                                  }
+                                    this.onUpdateData()}
                                 />
                               ) : itm.name ? (
                                 itm.name
@@ -415,13 +429,9 @@ class Voucher extends Component {
                                         e.target.value,
                                     })
                                   }}
+                                  onKeyPress={event => this.keypressHandler1(event)}
                                   onBlur={() =>
-                                    this.props.onUpdateData({
-                                      price: parseFloat(price),
-                                      discount_id: selectRowId,
-                                      card_type: "VOUCHER",
-                                    })
-                                  }
+                                    this.onUpdateData()}
                                 />
                               ) : itm.price ? (
                                 itm.price
@@ -441,12 +451,10 @@ class Voucher extends Component {
                                         e.target.value,
                                     })
                                   }}
+
+                                  onKeyPress={event => this.keypressHandler1(event)}
                                   onBlur={() =>
-                                    this.props.onUpdateData({
-                                      amount: parseFloat(amount),
-                                      discount_id: selectRowId,
-                                    })
-                                  }
+                                    this.onUpdateData()}
                                 />
                               ) : itm.amount ? (
                                 itm.amount
@@ -465,13 +473,10 @@ class Voucher extends Component {
                                         e.target.value,
                                     })
                                   }}
+
+                                  onKeyPress={event => this.keypressHandler1(event)}
                                   onBlur={() =>
-                                    this.props.onUpdateData({
-                                      discount: parseFloat(discount),
-                                      discount_id: selectRowId,
-                                      card_type: "VOUCHER",
-                                    })
-                                  }
+                                    this.onUpdateData()}
                                 />
                               ) : itm.discount ? (
                                 itm.discount
@@ -490,13 +495,9 @@ class Voucher extends Component {
                                         e.target.value,
                                     })
                                   }}
+                                  onKeyPress={event => this.keypressHandler1(event)}
                                   onBlur={() =>
-                                    this.props.onUpdateData({
-                                      min_order_value: parseFloat(min_order_value),
-                                      discount_id: selectRowId,
-                                      card_type: "VOUCHER",
-                                    })
-                                  }
+                                    this.onUpdateData()}
                                 />
                               ) : itm.min_order_value ? (
                                 itm.min_order_value
@@ -527,7 +528,6 @@ class Voucher extends Component {
                                   }
 
                                 />
-
                               ) : itm.expiry_date ? (
                                 moment(itm.expiry_date).format('LLL')
                               ) : null}
@@ -557,7 +557,7 @@ class Voucher extends Component {
                                 itm.type
                               ) : null}
                             </td>
-                            <td>
+                            {/* <td>
                               {selectRowId === itm._id &&
                                 selectRowClick > 1 ? (
                                 <select onChange={(e) => {
@@ -584,9 +584,7 @@ class Voucher extends Component {
                               ) : itm.discount_type ? (
                                 itm.discount_type
                               ) : null}
-                            </td>
-
-
+                            </td> */}
                             <td>
                               {selectRowId === itm._id &&
                                 selectRowClick > 1 ? (
@@ -623,7 +621,7 @@ class Voucher extends Component {
                                       ? "bg1"
                                       : "bg-secondary"
                                       } text-white px-1`}
-                                    onClick={() =>
+                                    onClick={() => this.setState({ selectRowId: itm._id, selectRowClick: 1 }, () =>
                                       this.props.onUpdateData(
                                         {
                                           is_deleted: false,
@@ -631,7 +629,7 @@ class Voucher extends Component {
                                           card_type: "VOUCHER",
                                         }
                                       )
-                                    }
+                                    )}
                                   >
                                     Enable
                                   </CBadge>
@@ -642,7 +640,7 @@ class Voucher extends Component {
                                       ? "btn-youtube"
                                       : "bg-secondary"
                                       } text-white px-1 ml-1`}
-                                    onClick={() =>
+                                    onClick={() => this.setState({ selectRowId: itm._id, selectRowClick: 1 }, () =>
                                       this.props.onUpdateData(
                                         {
                                           is_deleted: true,
@@ -650,7 +648,7 @@ class Voucher extends Component {
                                           card_type: "VOUCHER",
                                         }
                                       )
-                                    }
+                                    )}
                                   >
                                     Disable
                                   </CBadge>

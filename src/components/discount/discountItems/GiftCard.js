@@ -8,13 +8,13 @@ import {
   CCardHeader,
   CTooltip,
   CBadge,
-  CCollapse,
 } from "@coreui/react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Dropzone from "react-dropzone";
 import moment from 'moment';
 import { connect } from "react-redux";
+import { ConfirmBox } from "../../../Helpers/SweetAlert";
 import {
   addDiscountCardRequest,
   getDiscountCardRequest,
@@ -47,7 +47,7 @@ class GiftCard extends Component {
   componentDidMount() {
     this.props.getCardDiscountData({ "card_type": "GIFT_CARD" });
   }
-  componentDidUpdate = (DiscountReducerData) => {
+  componentDidUpdate = ({ DiscountReducerData }) => {
     if (
       DiscountReducerData &&
       DiscountReducerData.updateReq &&
@@ -56,12 +56,23 @@ class GiftCard extends Component {
     ) {
       this.setState({
         newRow: false,
+        min_order_value: 0,
+        selectRowClick: 1,
+        discount: "",
+        type: "",
+        min_order_value: 0,
+        is_deleted: false,
+        is_removed: false,
+        selectRowId: "",
+        discount_type: "",
+        payment_type: "",
         name: "",
-        selectRowClick: this.state.addCategory ? 2 : 1,
+        image: "",
+        price: 0,
+        amount: 0,
       })
     }
   }
-
   onRowClick = (item) => {
     const {
       selectRowId,
@@ -71,10 +82,13 @@ class GiftCard extends Component {
     this.setState({
       selectRowId: item._id,
       newRow: false,
+      name: item.name,
+      discount: item.discount,
       imageUrl: selectRowId === item._id ? item.image : "",
       selectRowClick: selectRowId === item._id ? selectRowClick + 1 : 1,
     });
   };
+
 
   handleChange = (e) => {
     const {
@@ -113,24 +127,7 @@ class GiftCard extends Component {
     })
     this.setState({ newRow: false, })
   }
-  handleChange = (e) => {
-    const {
-      selectRowId,
-    } = this.state;
-    const { target } = e;
-    const { value, name } = target;
-    this.props.onUpdateData({
-      [name]: value,
-      discount_id: selectRowId,
-    })
-    this.setState({
-      [name]: value,
-      errors: {
-        ...this.state.errors,
-        [name]: false,
-      },
-    });
-  };
+
   onSelectFile = async (file) => {
     const { selectRowId } = this.state;
     file.map(async (data, i) => {
@@ -163,20 +160,51 @@ class GiftCard extends Component {
       this.onAddDiscount();
     }
   };
+  keypressHandler1 = event => {
+    if (event.key === "Enter") {
+      this.onUpdateData();
+    }
+  };
 
+  onUpdateData = () => {
+    const { name, discount, amount, min_order_value, price, selectRowId } = this.state;
+    this.props.onUpdateData({
+      discount: parseFloat(discount),
+      min_order_value: parseFloat(min_order_value),
+      price: parseFloat(price),
+      amount: parseFloat(amount),
+      name: name,
+      discount_id: selectRowId,
+      card_type: "GIFT_CARD",
+    })
+    this.setState({ newRow: false, })
+  }
+  onRemove = async () => {
+    const { selectRowId } = this.state;
+    const { value } = await ConfirmBox({
+      text: "Do you want to Remove ?",
+    });
+    if (value) {
+      this.props.onUpdateData(
+        {
+          is_removed: true,
+          discount_id: selectRowId,
+          card_type: "GIFT_CARD",
+
+        }
+      )
+
+    }
+  };
   render() {
     const { DiscountReducerData } = this.props;
     const {
       discount,
       type,
-      day_time,
       min_order_value,
       is_deleted,
-      is_removed,
       newRow,
-      updateData, selectRowId, selectRowClick,
-      discount_type,
-      payment_type,
+      selectRowId, selectRowClick,
       name,
       price,
       amount,
@@ -197,13 +225,7 @@ class GiftCard extends Component {
                   className="btn-youtube text-white ml-2"
                   size="sm"
                   onClick={() =>
-                    this.props.onUpdateData(
-                      {
-                        is_removed: true,
-                        discount_id: selectRowId,
-                      }
-                    )
-                  }
+                    this.onRemove()}
                 >
                   <i class="fas fa-minus text-white" />
                 </CButton>
@@ -232,7 +254,7 @@ class GiftCard extends Component {
                     <th className="td2">Minimum_Order</th>
                     <th className="td2" >Expiry_Date_GiftCard</th>
                     <th className="td2">Type</th>
-                    <th className="td2">Discount_Type</th>
+                    {/* <th className="td2">Discount_Type</th> */}
                     <th className="td2">Payment_Type</th>
                     <th className="td2">Action</th>
                   </tr>
@@ -257,7 +279,6 @@ class GiftCard extends Component {
                         />
                       </td>
 
-                      <td></td>
                       <td></td>
                       <td></td>
 
@@ -323,14 +344,10 @@ class GiftCard extends Component {
                                         e.target.value,
                                     })
                                   }}
-                                  onKeyPress={event => this.keypressHandler(event)}
+
+                                  onKeyPress={event => this.keypressHandler1(event)}
                                   onBlur={() =>
-                                    this.props.onUpdateData({
-                                      name: name,
-                                      discount_id: selectRowId,
-                                      card_type: "GIFT_CARD",
-                                    })
-                                  }
+                                    this.onUpdateData()}
                                 />
                               ) : itm.name ? (
                                 itm.name
@@ -416,13 +433,10 @@ class GiftCard extends Component {
                                         e.target.value,
                                     })
                                   }}
+
+                                  onKeyPress={event => this.keypressHandler1(event)}
                                   onBlur={() =>
-                                    this.props.onUpdateData({
-                                      price: parseFloat(price),
-                                      discount_id: selectRowId,
-                                      card_type: "GIFT_CARD",
-                                    })
-                                  }
+                                    this.onUpdateData()}
                                 />
                               ) : itm.price ? (
                                 itm.price
@@ -442,13 +456,10 @@ class GiftCard extends Component {
                                         e.target.value,
                                     })
                                   }}
+
+                                  onKeyPress={event => this.keypressHandler1(event)}
                                   onBlur={() =>
-                                    this.props.onUpdateData({
-                                      amount: parseFloat(amount),
-                                      discount_id: selectRowId,
-                                      card_type: "GIFT_CARD",
-                                    })
-                                  }
+                                    this.onUpdateData()}
                                 />
                               ) : itm.amount ? (
                                 itm.amount
@@ -467,13 +478,10 @@ class GiftCard extends Component {
                                         e.target.value,
                                     })
                                   }}
+
+                                  onKeyPress={event => this.keypressHandler1(event)}
                                   onBlur={() =>
-                                    this.props.onUpdateData({
-                                      discount: parseFloat(discount),
-                                      discount_id: selectRowId,
-                                      card_type: "GIFT_CARD",
-                                    })
-                                  }
+                                    this.onUpdateData()}
                                 />
                               ) : itm.discount ? (
                                 itm.discount
@@ -492,13 +500,10 @@ class GiftCard extends Component {
                                         e.target.value,
                                     })
                                   }}
+
+                                  onKeyPress={event => this.keypressHandler1(event)}
                                   onBlur={() =>
-                                    this.props.onUpdateData({
-                                      min_order_value: parseFloat(min_order_value),
-                                      discount_id: selectRowId,
-                                      card_type: "GIFT_CARD",
-                                    })
-                                  }
+                                    this.onUpdateData()}
                                 />
                               ) : itm.min_order_value ? (
                                 itm.min_order_value
@@ -559,7 +564,7 @@ class GiftCard extends Component {
                                 itm.type
                               ) : null}
                             </td>
-                            <td>
+                            {/* <td>
                               {selectRowId === itm._id &&
                                 selectRowClick > 1 ? (
                                 <select onChange={(e) => {
@@ -586,7 +591,7 @@ class GiftCard extends Component {
                               ) : itm.discount_type ? (
                                 itm.discount_type
                               ) : null}
-                            </td>
+                            </td> */}
 
 
                             <td>
@@ -625,7 +630,8 @@ class GiftCard extends Component {
                                       ? "bg1"
                                       : "bg-secondary text-dark"
                                       } text-white px-1`}
-                                    onClick={() =>
+
+                                    onClick={() => this.setState({ selectRowId: itm._id, selectRowClick: 1 }, () =>
                                       this.props.onUpdateData(
                                         {
                                           is_deleted: false,
@@ -633,7 +639,7 @@ class GiftCard extends Component {
                                           card_type: "GIFT_CARD",
                                         }
                                       )
-                                    }
+                                    )}
                                   >
                                     Enable
                                   </CBadge>
@@ -644,7 +650,7 @@ class GiftCard extends Component {
                                       ? "btn-youtube"
                                       : "bg-secondary text-dark"
                                       } text-white px-1 ml-1`}
-                                    onClick={() =>
+                                    onClick={() => this.setState({ selectRowId: itm._id, selectRowClick: 1 }, () =>
                                       this.props.onUpdateData(
                                         {
                                           is_deleted: true,
@@ -652,7 +658,7 @@ class GiftCard extends Component {
                                           card_type: "GIFT_CARD",
                                         }
                                       )
-                                    }
+                                    )}
                                   >
                                     Disable
                                   </CBadge>

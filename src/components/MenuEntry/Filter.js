@@ -34,7 +34,7 @@ class Filter extends Component {
       selectRowId: "",
       selectRowClick: 0,
       filter_type_id: "",
-      show: false,
+      show: true,
       newRow: false,
     };
   }
@@ -160,15 +160,8 @@ class Filter extends Component {
   };
   render() {
     const { FilterTypeData } = this.props;
-    const {
-      name,
-      selectRowId,
-      updateData,
-      selectRowClick,
-      filter_type_id,
-      newRow,
-      show,
-    } = this.state;
+    const { name, selectRowId, selectRowClick, filter_type_id, newRow, show } =
+      this.state;
     return (
       <>
         <CCard
@@ -176,7 +169,7 @@ class Filter extends Component {
           style={{ height: "50px" }}
         >
           <h6 className="mt-3 px-3">
-            <i class="fas fa-list-alt mr-2"></i>List Of Filter
+            <i className="fas fa-list-alt mr-2"></i>List Of Filter
           </h6>
           <div className="mt-2 d-flex flex-row">
             <CButton
@@ -186,7 +179,7 @@ class Filter extends Component {
                 this.props.modalOpenRequest({ addAllergyModalOpen: true })
               }
             >
-              <i class="fas fa-plus mr-1" /> Add New Filter
+              <i className="fas fa-plus mr-1" /> Add New Filter
             </CButton>
 
             {this.state.show === true ? (
@@ -222,7 +215,7 @@ class Filter extends Component {
                       <CCard>
                         <CCardHeader className="d-flex flex-row justify-content-between">
                           <h6 className="pt-1">
-                            <i class="fas fa-list-alt mr-2"></i>List Of{" "}
+                            <i className="fas fa-list-alt mr-2"></i>List Of{" "}
                             {item.name}
                           </h6>
                           <div>
@@ -234,7 +227,7 @@ class Filter extends Component {
                                   this.deleteFilterType(item._id);
                                 }}
                               >
-                                <i class="fas fa-trash-alt text-white"></i>
+                                <i className="fas fa-trash-alt text-white"></i>
                               </CButton>
                             </CTooltip>
 
@@ -250,7 +243,7 @@ class Filter extends Component {
                                     : this.inActivateFilterType(item._id);
                                 }}
                               >
-                                <i class="fas fa-ban text-white" />
+                                <i className="fas fa-ban text-white" />
                               </CButton>
                             </CTooltip>
                             {/* <CTooltip content="remove">
@@ -259,7 +252,7 @@ class Filter extends Component {
                                 size="sm"
                                 onClick={() => this.onDeleteFilterData()}
                               >
-                                <i class="fas fa-minus text-white" />
+                                <i className="fas fa-minus text-white" />
                               </CButton>
                             </CTooltip> */}
                             <CTooltip content="Add New">
@@ -276,7 +269,7 @@ class Filter extends Component {
                                   });
                                 }}
                               >
-                                <i class="fas fa-plus" />
+                                <i className="fas fa-plus" />
                               </CButton>
                             </CTooltip>
                             <CTooltip content="Add Bulk">
@@ -293,7 +286,7 @@ class Filter extends Component {
                                   });
                                 }}
                               >
-                                <i class="fas fa-file-download"></i>
+                                <i className="fas fa-file-download"></i>
                               </CButton>
                             </CTooltip>
                           </div>
@@ -374,11 +367,6 @@ class Filter extends Component {
                                         <td className="w-50">
                                           {selectRowId === itm._id &&
                                           selectRowClick > 1 ? (
-                                            // <form
-                                            //   onSubmit={() =>
-                                            //     this.onUpdateData()
-                                            //   }
-                                            // >
                                             <input
                                               className="w-100"
                                               type="text"
@@ -397,8 +385,7 @@ class Filter extends Component {
                                               }
                                               onBlur={() => this.onUpdateData()}
                                             />
-                                          ) : // </form>
-                                          itm.name ? (
+                                          ) : itm.name ? (
                                             itm.name
                                           ) : null}
                                         </td>
@@ -468,9 +455,9 @@ class Filter extends Component {
                                   })
                                 ) : (
                                   <tr>
-                                    <td colspan="5">
+                                    <td colSpan="5">
                                       <h6>
-                                        <i class="fas fa-exclamation-triangle text-danger mr-2" />
+                                        <i className="fas fa-exclamation-triangle text-danger mr-2" />
                                         Not Found
                                       </h6>
                                     </td>

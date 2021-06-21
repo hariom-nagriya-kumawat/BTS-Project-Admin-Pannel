@@ -135,7 +135,7 @@ class FoodType extends Component {
         >
           <CCardHeader className="d-flex flex-row justify-content-between pr-0">
             <h6 className="pt-1">
-              <i class="fas fa-list-alt mr-2"></i>List Of FoodTypes
+              <i className="fas fa-list-alt mr-2"></i>List Of FoodTypes
             </h6>
             <div className="d-flex flex-row">
               <CTooltip content="remove FoodType">
@@ -144,7 +144,7 @@ class FoodType extends Component {
                   size="sm"
                   onClick={() => alert("Pending with backend!!")}
                 >
-                  <i class="fas fa-minus text-white" />
+                  <i className="fas fa-minus text-white" />
                 </CButton>
               </CTooltip>
               <CTooltip content="Add New FoodTypes">
@@ -155,10 +155,13 @@ class FoodType extends Component {
                     this.setState({
                       newRow: true,
                       show: true,
+                      name: "",
+                      avatar_url: "",
+                      imageUrl: "",
                     })
                   }
                 >
-                  <i class="fas fa-plus text-white" />
+                  <i className="fas fa-plus text-white" />
                 </CButton>
               </CTooltip>
               <CTooltip content="Add Bulk Data">
@@ -170,7 +173,7 @@ class FoodType extends Component {
                     this.props.modalOpenRequest({ bulkFoodTypeModal: true })
                   }
                 >
-                  <i class="fas fa-file-download" />
+                  <i className="fas fa-file-download" />
                 </CButton>
               </CTooltip>
               {this.state.show === true ? (
@@ -199,7 +202,7 @@ class FoodType extends Component {
           <CCollapse show={show}>
             <CCardBody>
               <div className="table-responsive table1div">
-                <table class="table table-bordered table-sm">
+                <table className="table table-bordered table-sm">
                   <thead>
                     <tr>
                       <th scope="col" className="w-25">
@@ -398,14 +401,14 @@ class FoodType extends Component {
                         })
                       ) : (
                         <tr>
-                          <td colspan="5">
+                          <td colSpan="5">
                             <h1>Not Found</h1>
                           </td>
                         </tr>
                       )
                     ) : (
                       <tr>
-                        <td colspan="5">
+                        <td colSpan="5">
                           <Loader />
                         </td>
                       </tr>

@@ -31,13 +31,13 @@ class Index extends Component {
     return (
       <>
         <CCard className="w-100">
-          <CCardHeader className="d-flex flex-row justify-content-between w-100 bg-white">
-            <h6 className="text-dark mt-1">CHARGES & CONDITIONS</h6>
+          <CCardHeader className="d-flex flex-row justify-content-between w-100 bg1">
+            <h6 className="text-white mt-1">CHARGES & CONDITIONS</h6>
             <div>
               {this.state.show === true ? (
                 <CTooltip content="expanded">
                   <i
-                    className="fas fa-caret-down text-dark fa-2x"
+                    className="fa fa-angle-down text-white fa-2x"
                     onClick={() =>
                       this.setState({
                         show1: false,
@@ -47,7 +47,7 @@ class Index extends Component {
                 </CTooltip>
               ) : (
                 <i
-                  className="fas fa-caret-right fa-2x text1 mt-1"
+                  className="fa fa-angle-right fa-2x  text-white mt-1"
                   aria-hidden="true"
                   onClick={() =>
                     this.setState({
@@ -68,6 +68,7 @@ class Index extends Component {
             <CCol xs="12" sm="6">
               <Delivery {...this.props} />
             </CCol>
+
             <CCol xs="12" sm="6">
               <DiscountService {...this.props} />
             </CCol>
@@ -79,23 +80,24 @@ class Index extends Component {
           </CRow>
         </CCollapse>
         <CCard className="w-100">
-          <CCardHeader className="d-flex flex-row justify-content-between w-100 bg-white">
-            <h6 className="text-dark">OTHER DISCOUNT</h6>
+          <CCardHeader className="d-flex flex-row justify-content-between w-100 bg1">
+            <h6 className="text-white">OTHER DISCOUNT</h6>
             <div>
               {this.state.show === true ? (
                 <CTooltip content="expanded">
                   <i
-                    className="fas fa-caret-down text-dark fa-2x"
+                    className="fa fa-angle-down text-white fa-2x"
                     onClick={() =>
                       this.setState({
                         show: false,
+                        openFilterId: "",
                       })
                     }
                   />
                 </CTooltip>
               ) : (
                 <i
-                  className="fas fa-caret-right text1 fa-2x mt-1"
+                  className="fa fa-angle-right text-white fa-2x mt-1"
                   aria-hidden="true"
                   onClick={() =>
                     this.setState({

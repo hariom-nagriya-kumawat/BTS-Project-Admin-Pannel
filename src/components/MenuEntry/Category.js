@@ -62,9 +62,7 @@ class Category extends Component {
       let allergyData =
         FilterTypeData &&
         FilterTypeData.data &&
-        FilterTypeData.data.filter(
-          (item) => item.name === "Allergy" || item.name === "allergy"
-        )[0];
+        FilterTypeData.data.filter((item) => item.name === "Allergy")[0];
       if (
         allergyData &&
         allergyData.filter_data &&
@@ -103,7 +101,7 @@ class Category extends Component {
         foodTypeData
           .filter((itm) => !itm.is_deleted)
           .map((item) => {
-            foodTypeOptions.push({ name: item.name, id: item._id });
+            foodTypeOptions.push({ name: item.name ? item.name : "", id: item._id });
             return true;
           });
       }
@@ -148,11 +146,13 @@ class Category extends Component {
 
   onSelect = (selectedList, name) => {
     const { selectRowId } = this.state;
+    console.log("selectedList, name", selectedList, name);
     if (name === "allergyData") {
       let allergyIds = [];
       for (let i = 0; i < selectedList.length; i++) {
         allergyIds.push(selectedList[i].id);
       }
+      console.log("allergyIds", allergyIds);
       this.props.onUpdateCategories({
         cId: selectRowId,
         allergy_ids: allergyIds,
@@ -170,9 +170,9 @@ class Category extends Component {
         cId: selectRowId,
         food_type_ids: foodTypeIds,
       });
-      this.setState({
-        food_type_ids: selectedList,
-      });
+      // this.setState({
+      //   food_type_ids: selectedList,
+      // });
     }
   };
 
@@ -243,7 +243,7 @@ class Category extends Component {
         });
       });
     }
-    this.props.setCId(item._id);
+    if (selectRowClick === 1) this.props.setCId(item._id);
     this.setState({
       selectRowId: item._id,
       addCategory: false,
@@ -294,6 +294,7 @@ class Category extends Component {
     }
     return foodTypeDataName;
   };
+
   onAddCategory = () => {
     const { pannelType } = this.props;
     const { name } = this.state;
@@ -318,7 +319,6 @@ class Category extends Component {
       name,
       description,
       selectRowId,
-      updateCategoryData,
       selectRowClick,
       allergy_ids,
       allergyOptions,
@@ -334,7 +334,11 @@ class Category extends Component {
             </h6>
             <div>
               <CTooltip content="remove">
-                <CButton className="btn-youtube text-white mr-2" size="sm">
+                <CButton
+                  className="btn-youtube text-white mr-2"
+                  size="sm"
+                  onClick={() => alert("Pending with backend")}
+                >
                   <i className="fas fa-minus text-white" />
                 </CButton>
               </CTooltip>
@@ -376,16 +380,16 @@ class Category extends Component {
                 >
                   <thead className="table1header">
                     <tr>
-                      <th scope="col">Name</th>
-                      <th scope="col">Description</th>
-                      <th scope="col">Order</th>
-                      <th scope="col">Not For Web</th>
-                      <th scope="col">Allergy Selection</th>
-                      <th scope="col">Food Type Selection</th>
-                      <th scope="col">Not Fot TW</th>
-                      <th scope="col">Discount</th>
-                      <th scope="col">Pannel</th>
-                      <th scope="col">Action</th>
+                      <th className="td2">Order</th>
+                      <th className="td2">Name</th>
+                      <th className="td2">Description</th>
+                      <th className="td2">Allergy Selection</th>
+                      <th className="td2">Food Type Selection</th>
+                      <th className="td2">For Web</th>
+                      <th className="td2">Fot TW</th>
+                      <th className="td2">Discount</th>
+                      <th className="td2">Pannel</th>
+                      <th className="td2">Action</th>
                     </tr>
                   </thead>
                   <Droppable droppableId="table">
@@ -397,6 +401,7 @@ class Category extends Component {
                         <>
                           {addCategory ? (
                             <tr>
+                              <td></td>
                               <td>
                                 <input
                                   className="w-100"
@@ -418,6 +423,7 @@ class Category extends Component {
                               </td>
                               <td></td>
                               <td></td>
+                              <td></td>
                               <td>
                                 <CSwitch
                                   className={"mx-1"}
@@ -425,8 +431,6 @@ class Category extends Component {
                                   name="is_web"
                                 />
                               </td>
-                              <td></td>
-                              <td></td>
                               <td>
                                 <CSwitch
                                   className={"mx-1"}
@@ -484,6 +488,7 @@ class Category extends Component {
                                         }
                                         onClick={() => this.onRowClick(item)}
                                       >
+                                        <td>{item.order ? item.order : 0}</td>
                                         <td>
                                           {selectRowId === item._id &&
                                           selectRowClick > 1 ? (
@@ -556,30 +561,7 @@ class Category extends Component {
                                             item.description
                                           )}
                                         </td>
-                                        <td>{item.order ? item.order : 0}</td>
-                                        <td>
-                                          <CSwitch
-                                            className={"mx-1"}
-                                            variant={"3d"}
-                                            name="is_web"
-                                            checked={item.is_web}
-                                            onChange={(e) =>
-                                              this.setState(
-                                                {
-                                                  selectRowId: item._id,
-                                                  selectRowClick: 1,
-                                                },
-                                                () =>
-                                                  this.props.onUpdateCategories(
-                                                    {
-                                                      cId: item._id,
-                                                      is_web: e.target.checked,
-                                                    }
-                                                  )
-                                              )
-                                            }
-                                          />
-                                        </td>
+
                                         <td>
                                           {selectRowId === item._id &&
                                           selectRowClick > 1 ? (
@@ -648,9 +630,9 @@ class Category extends Component {
                                                 chips: { display: "none" },
                                                 searchBox: {
                                                   border: "none",
-                                                  "border-bottom":
+                                                  borderBottom:
                                                     "1px solid #19c133",
-                                                  "border-radius": "0px",
+                                                  borderRadius: "0px",
                                                   background: "#fff",
                                                 },
                                               }}
@@ -671,6 +653,30 @@ class Category extends Component {
                                           <CSwitch
                                             className={"mx-1"}
                                             variant={"3d"}
+                                            name="is_web"
+                                            checked={item.is_web}
+                                            onChange={(e) =>
+                                              this.setState(
+                                                {
+                                                  selectRowId: item._id,
+                                                  selectRowClick: 1,
+                                                },
+                                                () =>
+                                                  this.props.onUpdateCategories(
+                                                    {
+                                                      cId: item._id,
+                                                      is_web: !item.is_web,
+                                                    }
+                                                  )
+                                              )
+                                            }
+                                          />
+                                        </td>
+
+                                        <td>
+                                          <CSwitch
+                                            className={"mx-1"}
+                                            variant={"3d"}
                                             name="is_tw"
                                             checked={item.is_tw}
                                             onChange={(e) =>
@@ -683,7 +689,7 @@ class Category extends Component {
                                                   this.props.onUpdateCategories(
                                                     {
                                                       cId: item._id,
-                                                      is_tw: e.target.checked,
+                                                      is_tw: !item.is_tw,
                                                     }
                                                   )
                                               )
@@ -707,7 +713,7 @@ class Category extends Component {
                                                     {
                                                       cId: item._id,
                                                       is_discount_applied:
-                                                        e.target.checked,
+                                                        !item.is_discount_applied,
                                                     }
                                                   )
                                               )
@@ -721,9 +727,9 @@ class Category extends Component {
                                               <CBadge
                                                 className={`${
                                                   !item.is_deleted
-                                                    ? "bg1"
+                                                    ? "bg1 text-white"
                                                     : "bg-secondary text-dark"
-                                                } text-white px-1`}
+                                                } px-1`}
                                                 onClick={() =>
                                                   this.setState(
                                                     {
@@ -747,9 +753,9 @@ class Category extends Component {
                                               <CBadge
                                                 className={`${
                                                   item.is_deleted
-                                                    ? "btn-youtube"
+                                                    ? "btn-youtube text-white"
                                                     : "bg-secondary text-dark"
-                                                } text-white px-1 ml-1`}
+                                                }  px-1 ml-1`}
                                                 onClick={() =>
                                                   this.setState(
                                                     {
@@ -799,7 +805,7 @@ class Category extends Component {
                   </Droppable>
                 </table>
               </div>
-            </DragDropContext>{" "}
+            </DragDropContext>
           </CCardBody>
         </CCard>
 

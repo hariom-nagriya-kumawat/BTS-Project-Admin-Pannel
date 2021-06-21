@@ -1,16 +1,14 @@
 import React, { Component } from "react";
 import {
-  CCol,
-  CRow,
   CButton,
   CCard,
   CCardBody,
   CCardHeader,
   CTooltip,
   CBadge,
-  CCollapse,
 } from "@coreui/react";
 
+import { ConfirmBox } from "../../../Helpers/SweetAlert";
 import { connect } from "react-redux";
 import {
   addHoureDiscountRequest,
@@ -32,21 +30,28 @@ class HappyHourse extends Component {
       selectRowClick: 0,
       discount_type: "",
       payment_type: "",
-      updateData: {
-        discount: 0,
-        type: "",
-        day_time: {},
-        min_order_value: 0,
-        discount_type: "",
-        payment_type: "",
-      }
     };
 
   }
   componentDidMount() {
     this.props.getHoursDiscountData();
   }
-
+  componentDidUpdate = ({ DiscountReducerData }) => {
+    if (
+      DiscountReducerData &&
+      DiscountReducerData.updateReq &&
+      DiscountReducerData.updateReq !==
+      this.props.DiscountReducerData.updateReq
+    ) {
+      this.setState({
+        newRow: false,
+        min_order_value: 0,
+        discount_id:"",
+        discount:0,
+        selectRowClick: 1,
+      })
+    }
+  }
   onRowClick = (item) => {
     const {
       selectRowId,
@@ -55,6 +60,10 @@ class HappyHourse extends Component {
 
     this.setState({
       selectRowId: item._id,
+      min_order_value: item.min_order_value,
+      discount: item.discount,
+      payment_type: item.payment_type,
+      day_time: item.day_time ? item.day_time : {},
       newRow: false,
       selectRowClick: selectRowId === item._id ? selectRowClick + 1 : 1,
     });
@@ -78,6 +87,7 @@ class HappyHourse extends Component {
     });
   };
 
+
   keypressHandler = event => {
     if (event.key === "Enter") {
       this.onAddDiscount();
@@ -86,10 +96,7 @@ class HappyHourse extends Component {
 
   onAddDiscount() {
     const {
-      discount,
-      type,
-      is_deleted,
-      newRow, is_removed, min_order_value,
+      discount
     } = this.state;
     this.props.onAddHoursDiscount({
       discount: parseFloat(discount),
@@ -100,6 +107,42 @@ class HappyHourse extends Component {
       is_removed: false,
     })
   }
+
+  keypressHandler1 = event => {
+    if (event.key === "Enter") {
+      this.onUpdateData();
+    }
+  };
+
+  onUpdateData = () => {
+    const { min_order_value, selectRowId ,discount} = this.state;
+    this.props.onUpdateData({
+      discount: parseFloat(discount),
+      type: "FLAT",
+      day_time: {},
+      min_order_value: parseFloat(min_order_value),
+      is_deleted: false,
+      is_removed: false,
+      discount_id: selectRowId,
+    })
+  }
+  onRemove = async () => {
+    const { selectRowId } = this.state;
+    const { value } = await ConfirmBox({
+      text: "Do you want to Remove ?",
+    });
+    if (value) {
+      this.props.onUpdateData(
+        {
+          is_removed: true,
+          discount_id: selectRowId,
+
+        }
+      )
+
+    }
+  };
+
   render() {
     const { DiscountReducerData } = this.props;
     const {
@@ -107,7 +150,8 @@ class HappyHourse extends Component {
       type,
       is_deleted,
       newRow,
-      updateData, selectRowId, selectRowClick,
+       selectRowId, 
+       selectRowClick,min_order_value
     } = this.state;
     return (
       <>
@@ -122,14 +166,7 @@ class HappyHourse extends Component {
                 <CButton
                   className="btn-youtube text-white ml-2"
                   size="sm"
-                  onClick={() =>
-                    this.props.onUpdateData(
-                      {
-                        is_removed: true,
-                        discount_id: selectRowId,
-                      }
-                    )
-                  }
+                  onClick={() => this.onRemove()}
                 >
                   <i class="fas fa-minus text-white" />
                 </CButton>
@@ -154,7 +191,7 @@ class HappyHourse extends Component {
                     <th className="td2">Type</th>
                     <th className="td2">Day&Time</th>
                     <th className="td2">Minimum Order</th>
-                    <th className="td2">Discount Type</th>
+                    {/* <th className="td2">Discount Type</th> */}
                     <th className="td2">Payment Type</th>
                     <th className="td2">Action</th>
                   </tr>
@@ -219,27 +256,21 @@ class HappyHourse extends Component {
                           <td>
                             {selectRowId === itm._id &&
                               selectRowClick > 1 ? (
-
                               <input
                                 className="w-100"
                                 type="text"
                                 name="discount"
-                                value={updateData.discount}
+                                value={discount}
                                 onChange={(e) =>
                                   this.setState({
-                                    updateData: {
-                                      ...updateData,
-                                      [e.target.name]:
-                                        e.target.value,
-                                    },
+                                    [e.target.name]:
+                                      e.target.value
                                   })
+
                                 }
                                 onBlur={() =>
-                                  this.props.onUpdateData({
-                                    discount: parseInt(updateData.discount),
-                                    discount_id: selectRowId,
-                                  })
-                                }
+                                  this.onUpdateData()}
+                                onKeyPress={event => this.keypressHandler1(event)}
                               />
                             ) : itm.discount ? (
                               itm.discount
@@ -254,15 +285,15 @@ class HappyHourse extends Component {
                                 name="type"
                                 value={type}
                               >
-                                <option value={null} className="bg1">
+                                <option value={null}>
                                   Select One
                                 </option>
 
-                                <option value="PERCENTAGE" className="bg1">
+                                <option value="PERCENTAGE">
                                   PERCENTAGE
                                 </option>
 
-                                <option value="FLAT" className="bg1">
+                                <option value="FLAT">
                                   FLAT
                                 </option>
                               </select>
@@ -279,29 +310,23 @@ class HappyHourse extends Component {
                                 className="w-100"
                                 type="text"
                                 name="min_order_value"
-                                value={updateData.min_order_value}
+                                value={min_order_value}
                                 onChange={(e) =>
                                   this.setState({
-                                    updateData: {
-                                      ...updateData,
-                                      [e.target.name]:
-                                        e.target.value,
-                                    },
+                                    [e.target.name]:
+                                      e.target.value,
                                   })
                                 }
                                 onBlur={() =>
-                                  this.props.onUpdateData({
-                                    min_order_value: parseInt(updateData.min_order_value),
-                                    discount_id: selectRowId,
-                                  })
-                                }
+                                  this.onUpdateData()}
+                                onKeyPress={event => this.keypressHandler1(event)}
                               />
                             ) : itm.min_order_value ? (
                               itm.min_order_value
                             ) : null}
                           </td>
 
-                          <td>
+                          {/* <td>
                             {selectRowId === itm._id &&
                               selectRowClick > 1 ? (
                               <select onChange={(e) => {
@@ -309,26 +334,26 @@ class HappyHourse extends Component {
                               }}
                                 name="discount_type"
                               >
-                                <option value={null} className="bg1">
+                                <option value={null}>
                                   Select One
                                 </option>
 
-                                <option value="ONE_TIME_SUBSCRIBER" className="bg1">
+                                <option value="ONE_TIME_SUBSCRIBER">
                                   ONE TIME SUBSCRIBER
                                 </option>
 
-                                <option value="PAYMENT_TYPE" className="bg1">
+                                <option value="PAYMENT_TYPE">
                                   PAYMENT TYPE
                                 </option>
 
-                                <option value="REDUNDANT_CART" className="bg1">
+                                <option value="REDUNDANT_CART">
                                   REDUNDANT CART
                                 </option>
                               </select>
                             ) : itm.discount_type ? (
                               itm.discount_type
                             ) : null}
-                          </td>
+                          </td> */}
 
 
                           <td>
@@ -339,19 +364,19 @@ class HappyHourse extends Component {
                               }}
                                 name="payment_type"
                               >
-                                <option value={null} className="bg1">
+                                <option value={null}>
                                   Select One
                                 </option>
 
-                                <option value="CARD" className="bg1">
+                                <option value="CARD">
                                   CARD
                                 </option>
 
-                                <option value="WALLET" className="bg1">
+                                <option value="WALLET">
                                   WALLET
                                 </option>
 
-                                <option value="CASH" className="bg1">
+                                <option value="CASH">
                                   CASH
                                 </option>
                               </select>
@@ -367,14 +392,14 @@ class HappyHourse extends Component {
                                     ? "bg1"
                                     : "bg-secondary text-dark"
                                     } text-white px-1`}
-                                  onClick={() =>
+                                  onClick={() => this.setState({ selectRowId: itm._id, selectRowClick: 1 }, () =>
                                     this.props.onUpdateData(
                                       {
                                         is_deleted: false,
-                                        discount_id: selectRowId,
+                                        discount_id: itm._id,
                                       }
                                     )
-                                  }
+                                  )}
                                 >
                                   Enable
                                 </CBadge>
@@ -385,14 +410,14 @@ class HappyHourse extends Component {
                                     ? "btn-youtube"
                                     : "bg-secondary text-dark"
                                     } text-white px-1 ml-1`}
-                                  onClick={() =>
+                                  onClick={() => this.setState({ selectRowId: itm._id, selectRowClick: 1 }, () =>
                                     this.props.onUpdateData(
                                       {
-                                        is_deleted: true,
-                                        discount_id: selectRowId,
+                                        is_deleted: false,
+                                        discount_id: itm._id,
                                       }
                                     )
-                                  }
+                                  )}
                                 >
                                   Disable
                                 </CBadge>

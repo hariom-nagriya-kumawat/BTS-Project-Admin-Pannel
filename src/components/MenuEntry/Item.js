@@ -125,7 +125,10 @@ class ListItems extends Component {
         foodTypeData
           .filter((itm) => !itm.is_deleted)
           .map((item) => {
-            foodTypeOptions.push({ name: item.name, id: item._id });
+            foodTypeOptions.push({
+              name: item.name ? item.name : "",
+              id: item._id,
+            });
             return true;
           });
       }
@@ -212,6 +215,7 @@ class ListItems extends Component {
     // for (let i = 0; i < selectedList.length; i++) {
     //   foodTypeIds.push(selectedList[i].id);
     // }
+    console.log("!!!", selectedItem, foodTypeIds);
     this.props.onUpdateItems({
       food_type_ids: [...foodTypeIds, selectedItem.id],
       item_id: selectRowId,
@@ -342,11 +346,11 @@ class ListItems extends Component {
             ...filterTypeData,
             [filterType[i].fiterTypeName]: optionData,
           };
-        }else{
+        } else {
           filterTypeData = {
             ...filterTypeData,
             [filterType[i].fiterTypeName]: [],
-          }
+          };
         }
       }
     }
@@ -392,7 +396,11 @@ class ListItems extends Component {
             </h6>
             <div>
               <CTooltip content="remove">
-                <CButton className="btn-youtube text-white mr-2" size="sm">
+                <CButton
+                  className="btn-youtube text-white mr-2"
+                  size="sm"
+                  onClick={() => alert("Pending with backend")}
+                >
                   <i className="fas fa-minus text-white" />
                 </CButton>
               </CTooltip>
@@ -432,32 +440,34 @@ class ListItems extends Component {
                 <table className="table table-bordered table-sm">
                   <thead className="table1header">
                     <tr>
-                      <th scope="col">S.no</th>
-                      <th scope="col">Name</th>
-                      <th scope="col">Category</th>
-                      <th scope="col">Sub Category</th>
-                      <th scope="col">panel_type</th>
+                      <th className="td2">S.no</th>
+                      <th className="td2">Name</th>
+                      <th className="td2">Category</th>
+                      <th className="td2">Sub Category</th>
+                      <th className="td2">panel_type</th>
 
                       <>
                         {filterType && filterType.length
                           ? filterType.map((item, index) => {
-                              return <th scope="col">{item.fiterTypeName}</th>;
+                              return (
+                                <th className="td2">{item.fiterTypeName}</th>
+                              );
                             })
                           : null}
                       </>
-                      <th scope="col">Food Type Selection</th>
+                      <th className="td2">Food Type Selection</th>
 
-                      <th scope="col">Options</th>
-                      <th scope="col">online price</th>
-                      <th scope="col">table price</th>
-                      <th scope="col">tw price</th>
-                      <th scope="col">BuyOne GetOne</th>
-                      <th scope="col">half price</th>
-                      <th scope="col">Tax</th>
-                      <th scope="col">For Web</th>
-                      <th scope="col">For TW</th>
-                      <th scope="col">Discount</th>
-                      <th scope="col">Action</th>
+                      <th className="td2">Options</th>
+                      <th className="td2">online price</th>
+                      <th className="td2">table price</th>
+                      <th className="td2">tw price</th>
+                      <th className="td2">BuyOne GetOne</th>
+                      <th className="td2">half price</th>
+                      <th className="td2">Tax</th>
+                      <th className="td2">For Web</th>
+                      <th className="td2">For TW</th>
+                      <th className="td2">Discount</th>
+                      <th className="td2">Action</th>
                     </tr>
                   </thead>
                   <Droppable droppableId="table">
@@ -480,6 +490,16 @@ class ListItems extends Component {
                                     this.setState({
                                       [e.target.name]: e.target.value,
                                     })
+                                  }
+                                  onKeyPress={({ key }) =>
+                                    key === "Enter"
+                                      ? this.props.onAddItems({
+                                          name,
+                                          category_id: categoryID,
+                                          sub_category_id: subCategoryId,
+                                          panel_type: pannelType,
+                                        })
+                                      : null
                                   }
                                   onBlur={() =>
                                     this.props.onAddItems({
@@ -614,6 +634,14 @@ class ListItems extends Component {
                                                   },
                                                 })
                                               }
+                                              onKeyPress={({ key }) =>
+                                                key === "Enter"
+                                                  ? this.props.onUpdateItems({
+                                                      name: updateItemData.name,
+                                                      item_id: selectRowId,
+                                                    })
+                                                  : null
+                                              }
                                               onBlur={() =>
                                                 this.props.onUpdateItems({
                                                   name: updateItemData.name,
@@ -659,6 +687,8 @@ class ListItems extends Component {
                                                           selectedItem,
                                                           filter.fiterTypeName,
                                                           item.filters
+                                                            ? item.filters
+                                                            : []
                                                         )
                                                       }
                                                       onRemove={(
@@ -670,6 +700,8 @@ class ListItems extends Component {
                                                           removedItem,
                                                           filter.fiterTypeName,
                                                           item.filters
+                                                            ? item.filters
+                                                            : []
                                                         )
                                                       }
                                                       displayValue="name"
@@ -725,6 +757,8 @@ class ListItems extends Component {
                                                   selectedList,
                                                   selectedItem,
                                                   item.food_type_ids
+                                                    ? item.food_type_ids
+                                                    : []
                                                 )
                                               }
                                               onRemove={(
@@ -735,6 +769,8 @@ class ListItems extends Component {
                                                   selectedList,
                                                   removedItem,
                                                   item.food_type_ids
+                                                    ? item.food_type_ids
+                                                    : []
                                                 )
                                               }
                                               displayValue="name"
@@ -763,9 +799,7 @@ class ListItems extends Component {
                                           )}
                                         </td>
 
-                                        <td>
-                                          
-                                        </td>
+                                        <td></td>
                                         <td>
                                           {selectRowId === item._id &&
                                           selectRowClick > 1 ? (
@@ -784,6 +818,16 @@ class ListItems extends Component {
                                                       e.target.value,
                                                   },
                                                 })
+                                              }
+                                              onKeyPress={({ key }) =>
+                                                key === "Enter"
+                                                  ?this.props.onUpdateItems({
+                                                    online_price: parseInt(
+                                                      updateItemData.online_price
+                                                    ),
+                                                    item_id: selectRowId,
+                                                  })
+                                                  : null
                                               }
                                               onBlur={() =>
                                                 this.props.onUpdateItems({
@@ -815,6 +859,16 @@ class ListItems extends Component {
                                                   },
                                                 })
                                               }
+                                              onKeyPress={({ key }) =>
+                                                key === "Enter"
+                                                  ?this.props.onUpdateItems({
+                                                    table_price: parseInt(
+                                                      updateItemData.table_price
+                                                    ),
+                                                    item_id: selectRowId,
+                                                  })
+                                                  : null
+                                              }
                                               onBlur={() =>
                                                 this.props.onUpdateItems({
                                                   table_price: parseInt(
@@ -845,6 +899,16 @@ class ListItems extends Component {
                                                   },
                                                 })
                                               }
+                                              onKeyPress={({ key }) =>
+                                              key === "Enter"
+                                                ?this.props.onUpdateItems({
+                                                  tw_price: parseInt(
+                                                    updateItemData.tw_price
+                                                  ),
+                                                  item_id: selectRowId,
+                                                })
+                                                : null
+                                            }
                                               onBlur={() =>
                                                 this.props.onUpdateItems({
                                                   tw_price: parseInt(
@@ -874,7 +938,7 @@ class ListItems extends Component {
                                                   this.props.onUpdateItems({
                                                     item_id: item._id,
                                                     buy_one_get_one:
-                                                      e.target.checked,
+                                                      !item.buy_one_get_one,
                                                   })
                                               )
                                             }
@@ -896,7 +960,7 @@ class ListItems extends Component {
                                                   this.props.onUpdateItems({
                                                     item_id: item._id,
                                                     half_price:
-                                                      e.target.checked,
+                                                      !item.half_price,
                                                   })
                                               )
                                             }
@@ -917,7 +981,7 @@ class ListItems extends Component {
                                                 () =>
                                                   this.props.onUpdateItems({
                                                     item_id: item._id,
-                                                    has_tax: e.target.checked,
+                                                    has_tax: !item.has_tax,
                                                   })
                                               )
                                             }
@@ -939,7 +1003,7 @@ class ListItems extends Component {
                                                 () =>
                                                   this.props.onUpdateItems({
                                                     item_id: item._id,
-                                                    is_web: e.target.checked,
+                                                    is_web:!item.is_web,
                                                   })
                                               )
                                             }
@@ -960,7 +1024,7 @@ class ListItems extends Component {
                                                 () =>
                                                   this.props.onUpdateItems({
                                                     item_id: item._id,
-                                                    is_tw: e.target.checked,
+                                                    is_tw: !item.is_tw,
                                                   })
                                               )
                                             }
@@ -982,7 +1046,7 @@ class ListItems extends Component {
                                                   this.props.onUpdateItems({
                                                     item_id: item._id,
                                                     is_discount_applied:
-                                                      e.target.checked,
+                                                      !item.is_discount_applied,
                                                   })
                                               )
                                             }
@@ -994,9 +1058,9 @@ class ListItems extends Component {
                                               <CBadge
                                                 className={`${
                                                   !item.is_deleted
-                                                    ? "bg1"
+                                                    ? "bg1 text-white"
                                                     : "bg-secondary text-dark"
-                                                } text-white px-1`}
+                                                }  px-1`}
                                                 onClick={() =>
                                                   this.setState(
                                                     {
@@ -1018,9 +1082,9 @@ class ListItems extends Component {
                                               <CBadge
                                                 className={`${
                                                   item.is_deleted
-                                                    ? "btn-youtube"
+                                                    ? "btn-youtube text-white"
                                                     : "bg-secondary text-dark"
-                                                } text-white px-1 ml-1`}
+                                                }  px-1 ml-1`}
                                                 onClick={() =>
                                                   this.setState(
                                                     {
@@ -1049,7 +1113,6 @@ class ListItems extends Component {
                               <tr>
                                 <td colSpan="22">
                                   <h6>
-                                    {" "}
                                     <i class="fas fa-exclamation-triangle text-danger mr-2" />
                                     Not Found
                                   </h6>
@@ -1069,7 +1132,7 @@ class ListItems extends Component {
                   </Droppable>
                 </table>
               </div>
-            </DragDropContext>{" "}
+            </DragDropContext>
           </CCardBody>
         </CCard>
 

@@ -19,7 +19,7 @@ html {
 }
 .table1header {
   position: -webkit-sticky;
-  /* position: sticky; */
+  position: sticky;
   top: 0;
 }
 .table1div {

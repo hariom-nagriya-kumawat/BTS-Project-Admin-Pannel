@@ -42,7 +42,6 @@ const addDayDiscountLogic = createLogic({
       return;
     } else {
       logger(result);
-      console.log("result", result.data);
       dispatch(
         getDayDiscountSuccess({
           data: [result.data, ...data],
@@ -157,9 +156,13 @@ const updateDayDiscountLogic = createLogic({
       return;
     } else {
       logger(result);
-      dispatch(getDayDiscountSuccessById({ dataById: {} }));
-      let index = data.findIndex((item) => item._id === action.payload.discount_id);
-      data[index] = result.data;
+      if (result.data && result.data.is_removed) {
+        let index = data.findIndex((item) => item._id === action.payload.discount_id);
+        data.splice(index, 1)
+      } else {
+        let index = data.findIndex((item) => item._id === action.payload.discount_id);
+        data[index] = result.data;
+      }
       dispatch(
         getDayDiscountSuccess({ data: data, isLoading: false, updateReq: "End" })
       );

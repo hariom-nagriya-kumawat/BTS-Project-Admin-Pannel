@@ -244,21 +244,36 @@ const updateDiscountCardLogic = createLogic({
     } else {
       logger(result);
       if (cardType === "GIFT_CARD") {
-        let index = GiftData.findIndex((item) => item._id === dId);
-        GiftData[index] = result.data;
+        if (GiftData && GiftData.is_removed) {
+          let index = GiftData.findIndex((item) => item._id === dId);
+          GiftData.splice(index, 1)
+        } else {
+          let index = GiftData.findIndex((item) => item._id === dId);
+          GiftData[index] = result.data;
+        }
         dispatch(
           getDiscountCardSuccess({ giftCarddata: GiftData, isLoading: false, updateReq: "End" })
         );
 
       } else if (cardType === "COUPON") {
-        let index = CouponData.findIndex((item) => item._id === dId);
-        CouponData[index] = result.data;
+        if (CouponData && CouponData.is_removed) {
+          let index = CouponData.findIndex((item) => item._id === dId);
+          CouponData.splice(index, 1)
+        } else {
+          let index = CouponData.findIndex((item) => item._id === dId);
+          CouponData[index] = result.data;
+        }
         dispatch(
           getDiscountCardSuccess({ copanData: CouponData, isLoading: false, updateReq: "End" })
         );
       } else {
-        let index = VoucherData.findIndex((item) => item._id === dId);
-        VoucherData[index] = result.data;
+        if (VoucherData && VoucherData.is_removed) {
+          let index = VoucherData.findIndex((item) => item._id === dId);
+          VoucherData.splice(index, 1)
+        } else {
+          let index = VoucherData.findIndex((item) => item._id === dId);
+          VoucherData[index] = result.data;
+        }
         dispatch(
           getDiscountCardSuccess({ voucherData: VoucherData, isLoading: false, updateReq: "End" })
         );

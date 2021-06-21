@@ -15,7 +15,6 @@ import {
     getDeliveryChargesRequest,
     updateDeliveryChargesRequest,
 } from "../../../actions";
-import { type } from "jquery";
 class DeliveryCharges extends Component {
     constructor(props) {
         super(props);

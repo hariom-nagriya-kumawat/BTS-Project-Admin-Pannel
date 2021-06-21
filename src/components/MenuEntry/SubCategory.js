@@ -67,7 +67,7 @@ class ListItems extends Component {
       let allergyData =
         FilterTypeData &&
         FilterTypeData.data &&
-        FilterTypeData.data.filter((item) => item.name === "allergy")[0];
+        FilterTypeData.data.filter((item) => item.name === "Allergy")[0];
       if (
         allergyData &&
         allergyData.filter_data &&
@@ -106,7 +106,10 @@ class ListItems extends Component {
         foodTypeData
           .filter((itm) => !itm.is_deleted)
           .map((item) => {
-            foodTypeOptions.push({ name: item.name, id: item._id });
+            foodTypeOptions.push({
+              name: item.name ? item.name : "",
+              id: item._id,
+            });
             return true;
           });
       }
@@ -135,7 +138,7 @@ class ListItems extends Component {
         is_deleted: false,
         description: "",
         selectRowId: data && data._id,
-        selectRowClick: this.state.addSubCategory ? 2 : 1,
+        selectRowClick: 1,
         updateCategoryData: updateCategoryData,
       });
     }
@@ -186,9 +189,9 @@ class ListItems extends Component {
         sub_category_id: selectRowId,
         food_type_ids: foodTypeIds,
       });
-      this.setState({
-        food_type_ids: selectedList,
-      });
+      // this.setState({
+      //   food_type_ids: selectedList,
+      // });
     }
   };
 
@@ -264,7 +267,7 @@ class ListItems extends Component {
         });
       });
     }
-    this.props.setSubCId(item._id);
+    if (selectRowClick === 1) this.props.setSubCId(item._id);
     this.setState({
       selectRowId: item._id,
       addCategory: false,
@@ -359,7 +362,11 @@ class ListItems extends Component {
               <i class="fas fa-list-alt mr-2"></i>List Of Sub Category
             </h6>
             <div>
-              <CButton className="btn-youtube text-white mr-2" size="sm">
+              <CButton
+                className="btn-youtube text-white mr-2"
+                size="sm"
+                onClick={() => alert("Pending with backend")}
+              >
                 <i class="fas fa-minus" />
               </CButton>
               <CButton
@@ -376,6 +383,16 @@ class ListItems extends Component {
               >
                 <i class="fas fa-plus" />
               </CButton>
+              <CTooltip content="Add Bulk">
+                <CButton
+                  color="info"
+                  size="sm"
+                  className="ml-2"
+                  onClick={() => alert("Pending with backend")}
+                >
+                  <i className="fas fa-file-download"></i>
+                </CButton>
+              </CTooltip>
             </div>
           </CCardHeader>
           <CCardBody>
@@ -416,6 +433,11 @@ class ListItems extends Component {
                                       [e.target.name]: e.target.value,
                                     })
                                   }
+                                  onKeyPress={({ key }) =>
+                                    key === "Enter"
+                                      ? this.onAddSubCategory()
+                                      : null
+                                  }
                                   onBlur={() => this.onAddSubCategory()}
                                 />
                               </td>
@@ -449,7 +471,9 @@ class ListItems extends Component {
                                 <div className="d-flex flex-row text-center">
                                   <CBadge
                                     className={`${
-                                      !is_deleted ? "bg1" : "bg-secondary text-dark"
+                                      !is_deleted
+                                        ? "bg1"
+                                        : "bg-secondary text-dark"
                                     } text-white px-1 pt-1 pb-1`}
                                   >
                                     Enable
@@ -510,6 +534,17 @@ class ListItems extends Component {
                                                     },
                                                   })
                                                 }
+                                                onKeyPress={({ key }) =>
+                                                  key === "Enter"
+                                                    ? this.props.onUpdateSubCategory(
+                                                        {
+                                                          name: updateCategoryData.name,
+                                                          sub_category_id:
+                                                            selectRowId,
+                                                        }
+                                                      )
+                                                    : null
+                                                }
                                                 onBlur={() =>
                                                   this.props.onUpdateSubCategory(
                                                     {
@@ -543,6 +578,18 @@ class ListItems extends Component {
                                                         e.target.value,
                                                     },
                                                   })
+                                                }
+                                                onKeyPress={({ key }) =>
+                                                  key === "Enter"
+                                                    ? this.props.onUpdateSubCategory(
+                                                        {
+                                                          description:
+                                                            updateCategoryData.description,
+                                                          sub_category_id:
+                                                            selectRowId,
+                                                        }
+                                                      )
+                                                    : null
                                                 }
                                                 onBlur={() =>
                                                   this.props.onUpdateSubCategory(
@@ -599,9 +646,9 @@ class ListItems extends Component {
                                                   chips: { display: "none" },
                                                   searchBox: {
                                                     border: "none",
-                                                    "border-bottom":
+                                                    borderBottom:
                                                       "1px solid #19c133",
-                                                    "border-radius": "0px",
+                                                    borderRadius: "0px",
                                                     background: "#fff",
                                                   },
                                                 }}
@@ -642,9 +689,9 @@ class ListItems extends Component {
                                                   chips: { display: "none" },
                                                   searchBox: {
                                                     border: "none",
-                                                    "border-bottom":
+                                                    borderBottom:
                                                       "1px solid #19c133",
-                                                    "border-radius": "0px",
+                                                    borderRadius: "0px",
                                                     background: "#fff",
                                                   },
                                                 }}
@@ -678,7 +725,7 @@ class ListItems extends Component {
                                                       {
                                                         sub_category_id:
                                                           item._id,
-                                                        is_tw: e.target.checked,
+                                                        is_tw: !item.is_tw,
                                                       }
                                                     )
                                                 )
@@ -703,7 +750,7 @@ class ListItems extends Component {
                                                         sub_category_id:
                                                           item._id,
                                                         is_discount_applied:
-                                                          e.target.checked,
+                                                          !item.is_discount_applied,
                                                       }
                                                     )
                                                 )

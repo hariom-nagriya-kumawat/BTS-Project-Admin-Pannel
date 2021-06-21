@@ -54,21 +54,31 @@ class Index extends Component {
     this.setState({ active: idx, show: true });
   };
   setCId = (data) => {
-    const { pannelType } = this.state;
+    const { pannelType ,subCategoryId} = this.state;
     this.setState({ categoryID: data });
     this.props.getSubCategoryData({
       category_id: data ? data : "",
       panel_type: pannelType,
     });
+    let filter = {};
+    if (pannelType !== "") filter.panel_type = pannelType;
+    if (subCategoryId !== "") filter.sub_category_id = subCategoryId;
+    if (data) filter.category_id = data;
+    this.props.getItemsData(filter);
   };
   setSubCId = (data) => {
     const { categoryID, pannelType } = this.state;
     this.setState({ subCategoryId: data });
-    this.props.getItemsData({
-      category_id: categoryID,
-      sub_category_id: data,
-      panel_type: pannelType,
-    });
+    let filter = {};
+    if (pannelType !== "") filter.panel_type = pannelType;
+    if (categoryID !== "") filter.category_id = categoryID;
+    if (data) filter.sub_category_id = data;
+    this.props.getItemsData(filter);
+    // this.props.getItemsData({
+    //   category_id: categoryID,
+    //   sub_category_id: data,
+    //   panel_type: pannelType,
+    // });
   };
   render() {
     const { show, active, categoryID, pannelType, subCategoryId } = this.state;

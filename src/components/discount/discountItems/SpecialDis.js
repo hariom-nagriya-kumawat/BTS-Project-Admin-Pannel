@@ -16,6 +16,8 @@ import {
   getDayDiscountRequest,
   updateDayDiscountRequest,
 } from "../../../actions";
+
+import { ConfirmBox } from "../../../Helpers/SweetAlert";
 class SpecialDis extends Component {
   constructor(props) {
     super(props);
@@ -29,17 +31,28 @@ class SpecialDis extends Component {
       newRow: false,
       selectRowId: "",
       selectRowClick: 0,
-      updateData: {
-        discount: 0,
-        type: "",
-        day_time: {},
-        min_order_value: 0,
-      }
     };
 
   }
   componentDidMount() {
     this.props.getHoursDiscountData();
+  }
+  componentDidUpdate = ({ DiscountReducerData }) => {
+    if (
+      DiscountReducerData &&
+      DiscountReducerData.updateReq &&
+      DiscountReducerData.updateReq !==
+      this.props.DiscountReducerData.updateReq
+    ) {
+      this.setState({
+        newRow: false,
+        min_order_value: 0,
+        selectRowClick: 1,
+        tax: 0,
+        discount:0.0,
+        type:"",
+      })
+    }
   }
 
   onRowClick = (item) => {
@@ -79,11 +92,11 @@ class SpecialDis extends Component {
   };
 
   onAddDiscount = () => {
-    const { discount} = this.state;
+    const { discount } = this.state;
     let json = {
       discount: parseFloat(discount),
       type: "FLAT",
-      discount_type: "ONE_TIME_SUBSCRIBER",
+      discount_type: "",
       payment_type: "CARD",
       min_order_value: 0.0,
       is_deleted: false,
@@ -92,6 +105,38 @@ class SpecialDis extends Component {
     }
     this.props.onAddHoursDiscount(json)
   }
+  keypressHandler1 = event => {
+    if (event.key === "Enter") {
+      this.onUpdateData();
+    }
+  };
+
+  onUpdateData = () => {
+    const { min_order_value, selectRowId, discount } = this.state;
+    this.props.onUpdateData({
+      discount: parseFloat(discount),
+      min_order_value: parseFloat(min_order_value),
+      is_deleted: false,
+      is_removed: false,
+      discount_id: selectRowId,
+    })
+  }
+  onRemove = async () => {
+    const { selectRowId } = this.state;
+    const { value } = await ConfirmBox({
+      text: "Do you want to Remove ?",
+    });
+    if (value) {
+      this.props.onUpdateData(
+        {
+          is_removed: true,
+          discount_id: selectRowId,
+
+        }
+      )
+
+    }
+  };
 
   render() {
 
@@ -102,7 +147,7 @@ class SpecialDis extends Component {
       type,
       is_deleted,
       newRow,
-      updateData, selectRowId, selectRowClick, discount_date
+      selectRowId, min_order_value, selectRowClick, discount_date
 
     } = this.state;
     return (
@@ -118,14 +163,7 @@ class SpecialDis extends Component {
                 <CButton
                   className="btn-youtube text-white ml-2"
                   size="sm"
-                  onClick={() =>
-                    this.props.onUpdateData(
-                      {
-                        is_removed: true,
-                        discount_id: selectRowId,
-                      }
-                    )
-                  }
+                  onClick={() => this.onRemove()}
                 >
                   <i class="fas fa-minus text-white" />
                 </CButton>
@@ -150,7 +188,7 @@ class SpecialDis extends Component {
                     <th className="td2">Type</th>
                     <th className="td2 px-3">Date_Day_Time</th>
                     <th className="td2">Minimum_Order_Value</th>
-                    <th className="td2">Discount_Type</th>
+                    {/* <th className="td2">Discount_Type</th> */}
                     <th className="td2">Payment_Type</th>
                     <th className="td2">Action</th>
                   </tr>
@@ -178,7 +216,6 @@ class SpecialDis extends Component {
                       <td></td>
                       <td></td>
 
-                      <td></td>
                       <td></td>
                       <td>
                         <div className="d-flex flex-row justify-content-center">
@@ -224,22 +261,17 @@ class SpecialDis extends Component {
                                 className="w-100"
                                 type="text"
                                 name="discount"
-                                value={updateData.discount}
+                                value={discount}
                                 onChange={(e) =>
                                   this.setState({
-                                    updateData: {
-                                      ...updateData,
-                                      [e.target.name]:
-                                        e.target.value,
-                                    },
+                                    [e.target.name]:
+                                      e.target.value,
+
                                   })
                                 }
+                                onKeyPress={event => this.keypressHandler1(event)}
                                 onBlur={() =>
-                                  this.props.onUpdateData({
-                                    discount: parseInt(updateData.discount),
-                                    discount_id: selectRowId,
-                                  })
-                                }
+                                  this.onUpdateData()}
                               />
                             ) : itm.discount ? (
                               itm.discount
@@ -254,15 +286,15 @@ class SpecialDis extends Component {
                                 name="type"
                                 value={type}
                               >
-                                <option value={null} className="bg1">
+                                <option value={null}>
                                   Select One
                                 </option>
 
-                                <option value="PERCENTAGE" className="bg1">
+                                <option value="PERCENTAGE">
                                   PERCENTAGE
                                 </option>
 
-                                <option value="FLAT" className="bg1">
+                                <option value="FLAT">
                                   FLAT
                                 </option>
                               </select>
@@ -305,28 +337,22 @@ class SpecialDis extends Component {
                               <input
                                 type="text"
                                 name="min_order_value"
-                                value={updateData.min_order_value}
+                                value={min_order_value}
                                 onChange={(e) =>
                                   this.setState({
-                                    updateData: {
-                                      ...updateData,
-                                      [e.target.name]:
-                                        e.target.value,
-                                    },
+                                    [e.target.name]:
+                                      e.target.value,
                                   })
                                 }
+                                onKeyPress={event => this.keypressHandler1(event)}
                                 onBlur={() =>
-                                  this.props.onUpdateData({
-                                    min_order_value: parseInt(updateData.min_order_value),
-                                    discount_id: selectRowId,
-                                  })
-                                }
+                                  this.onUpdateData()}
                               />
                             ) : itm.min_order_value ? (
                               itm.min_order_value
                             ) : null}
                           </td>
-                          <td>
+                          {/* <td>
                             {selectRowId === itm._id &&
                               selectRowClick > 1 ? (
                               <select onChange={(e) => {
@@ -334,26 +360,26 @@ class SpecialDis extends Component {
                               }}
                                 name="discount_type"
                               >
-                                <option value={null} className="bg1">
+                                <option value={null}>
                                   Select One
                                 </option>
 
-                                <option value="ONE_TIME_SUBSCRIBER" className="bg1">
+                                <option value="ONE_TIME_SUBSCRIBER">
                                   ONE TIME SUBSCRIBER
                                 </option>
 
-                                <option value="PAYMENT_TYPE" className="bg1">
+                                <option value="PAYMENT_TYPE">
                                   PAYMENT TYPE
                                 </option>
 
-                                <option value="REDUNDANT_CART" className="bg1">
+                                <option value="REDUNDANT_CART">
                                   REDUNDANT CART
                                 </option>
                               </select>
                             ) : itm.discount_type ? (
                               itm.discount_type
                             ) : null}
-                          </td>
+                          </td> */}
 
 
                           <td>
@@ -364,19 +390,19 @@ class SpecialDis extends Component {
                               }}
                                 name="payment_type"
                               >
-                                <option value={null} className="bg1">
+                                <option value={null}>
                                   Select One
                                 </option>
 
-                                <option value="CARD" className="bg1">
+                                <option value="CARD">
                                   CARD
                                 </option>
 
-                                <option value="WALLET" className="bg1">
+                                <option value="WALLET">
                                   WALLET
                                 </option>
 
-                                <option value="CASH" className="bg1">
+                                <option value="CASH">
                                   CASH
                                 </option>
                               </select>
@@ -392,14 +418,14 @@ class SpecialDis extends Component {
                                     ? "bg1"
                                     : "bg-secondary text-dark"
                                     } text-white px-1`}
-                                  onClick={() =>
+                                  onClick={() => this.setState({ selectRowId: itm._id, selectRowClick: 1 }, () =>
                                     this.props.onUpdateData(
                                       {
                                         is_deleted: false,
-                                        discount_id: selectRowId,
+                                        discount_id: itm._id,
                                       }
                                     )
-                                  }
+                                  )}
                                 >
                                   Enable
                                 </CBadge>
@@ -410,14 +436,14 @@ class SpecialDis extends Component {
                                     ? "btn-youtube"
                                     : "bg-secondary text-dark"
                                     } text-white px-1 ml-1`}
-                                  onClick={() =>
+                                  onClick={() => this.setState({ selectRowId: itm._id, selectRowClick: 1 }, () =>
                                     this.props.onUpdateData(
                                       {
                                         is_deleted: true,
-                                        discount_id: selectRowId,
+                                        discount_id: itm._id,
                                       }
                                     )
-                                  }
+                                  )}
                                 >
                                   Disable
                                 </CBadge>
