@@ -16,6 +16,7 @@ import Category from "./Category";
 import SubCategory from "./SubCategory";
 import Item from "./Item";
 import Filter from "./Filter";
+import Options from "./Options";
 // import FoodType from "./FoodType";
 import {
   getCategoriesRequest,
@@ -54,7 +55,7 @@ class Index extends Component {
     this.setState({ active: idx, show: true });
   };
   setCId = (data) => {
-    const { pannelType ,subCategoryId} = this.state;
+    const { pannelType, subCategoryId } = this.state;
     this.setState({ categoryID: data });
     this.props.getSubCategoryData({
       category_id: data ? data : "",
@@ -221,13 +222,19 @@ class Index extends Component {
                           categoryID={categoryID}
                         />
                       </CCol>
+
+
                     </CRow>
                   </CTabPane>
                 </CTabContent>
               </CCollapse>
             </CTabs>
           </CCol>
+          <CCol xs="12">
+            <Options />
+          </CCol>
         </CRow>
+
       </>
     );
   }

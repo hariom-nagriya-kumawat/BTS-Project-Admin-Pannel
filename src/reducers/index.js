@@ -1,7 +1,6 @@
 import { routerReducer } from "react-router-redux";
 import { combineReducers } from "redux";
 import { handleActions } from "redux-actions";
-
 import { ResponsiveReducer } from "./responsive";
 import { AuthReducer } from "./auth";
 import { CategorieReducer } from "./categories";
@@ -16,6 +15,7 @@ import { DiscountCardReducer } from "./Discount/DiscountCard";
 import { OrderDiscountReducer } from "./Discount/OrderCard";
 import {ServiceDiscountReducer} from "./Discount/ServiceCard";
 import {DeliveryChargesReducer} from "./Discount/DeliveryChargesCard";
+import {OptionsReducer} from "./options";
 export const mainReducer = handleActions(
   {
     SHOW_LOADER: (state, action) => ({
@@ -46,6 +46,8 @@ const AppReducer = combineReducers({
   OrderDiscountReducer,
   ServiceDiscountReducer,
   DeliveryChargesReducer,
+  DeliveryChargesReducer,
+  OptionsReducer,
   routing: routerReducer,
 });
 

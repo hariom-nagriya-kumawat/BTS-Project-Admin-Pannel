@@ -14,7 +14,7 @@ export * from "./Discount/DiscountCard";
 export * from "./Discount/OrderDiscount";
 export * from "./Discount/ServiceDiscount";
 export * from "./Discount/DeliveryCharges";
-
+export * from "./options";
 export const redirectTo = createAction("REDIRET_TO");
 
 export const showLoader = createAction("SHOW_LOADER");
