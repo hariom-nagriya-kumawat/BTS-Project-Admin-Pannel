@@ -358,7 +358,7 @@ class ListItems extends Component {
       <>
         <CCard>
           <CCardHeader className="d-flex  flex-row justify-content-between">
-            <h6>
+            <h6 className="pt-1">
               <i class="fas fa-list-alt mr-2"></i>List Of Sub Category
             </h6>
             <div>
@@ -401,13 +401,13 @@ class ListItems extends Component {
                 <table class="table table-bordered table-sm">
                   <thead className="table1header">
                     <tr>
+                      <th className="td2">Order</th>
                       <th className="td2">Name</th>
                       <th className="td2">Description</th>
-                      <th className="td2">Order</th>
-                      <th className="td2">Not For Web</th>
                       <th className="td2">Allergy Selection</th>
                       <th className="td2">Food Type Selection</th>
-                      <th className="td2">Not Fot TW</th>
+                      <th className="td2">For Web</th>
+                      <th className="td2">Fot TW</th>
                       <th className="td2">Discount</th>
                       <th className="td2">Pannel</th>
                       <th className="td2">Action</th>
@@ -423,6 +423,7 @@ class ListItems extends Component {
                           {addSubCategory ? (
                             <tr>
                               <td>
+                                <td></td>
                                 <input
                                   className="w-100"
                                   type="text"
@@ -443,6 +444,7 @@ class ListItems extends Component {
                               </td>
                               <td></td>
                               <td></td>
+                              <td></td>
                               <td>
                                 <CSwitch
                                   className={"mx-1"}
@@ -450,8 +452,6 @@ class ListItems extends Component {
                                   name="is_web"
                                 />
                               </td>
-                              <td></td>
-                              <td></td>
                               <td>
                                 <CSwitch
                                   className={"mx-1"}
@@ -517,6 +517,7 @@ class ListItems extends Component {
                                           }
                                           onClick={() => this.onRowClick(item)}
                                         >
+                                          <td>{item.order ? item.order : 0}</td>
                                           <td>
                                             {selectRowId === item._id &&
                                             selectRowClick > 1 ? (
@@ -606,21 +607,6 @@ class ListItems extends Component {
                                               item.description
                                             )}
                                           </td>
-                                          <td>{item.order ? item.order : 0}</td>
-                                          <td>
-                                            <CSwitch
-                                              className={"mx-1"}
-                                              variant={"3d"}
-                                              name="is_web"
-                                              checked={item.is_web}
-                                              onChange={(e) =>
-                                                this.props.onUpdateSubCategory({
-                                                  sub_category_id: selectRowId,
-                                                  is_web: e.target.checked,
-                                                })
-                                              }
-                                            />
-                                          </td>
                                           <td>
                                             {selectRowId === item._id &&
                                             selectRowClick > 1 ? (
@@ -707,7 +693,20 @@ class ListItems extends Component {
                                               </>
                                             )}
                                           </td>
-
+                                          <td>
+                                            <CSwitch
+                                              className={"mx-1"}
+                                              variant={"3d"}
+                                              name="is_web"
+                                              checked={item.is_web}
+                                              onChange={(e) =>
+                                                this.props.onUpdateSubCategory({
+                                                  sub_category_id: selectRowId,
+                                                  is_web: e.target.checked,
+                                                })
+                                              }
+                                            />
+                                          </td>
                                           <td>
                                             <CSwitch
                                               className={"mx-1"}

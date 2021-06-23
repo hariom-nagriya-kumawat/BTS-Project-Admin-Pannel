@@ -329,7 +329,7 @@ class Category extends Component {
       <>
         <CCard>
           <CCardHeader className="d-flex  flex-row justify-content-between">
-            <h6>
+            <h6 className="pt-1">
               <i className="fas fa-list-alt mr-2"></i>Category Name
             </h6>
             <div>

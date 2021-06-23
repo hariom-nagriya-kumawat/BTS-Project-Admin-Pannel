@@ -173,7 +173,7 @@ class DiscountService extends Component {
                                         <th>Sr.</th>
                                         <th scope="col">Min Order Value</th>
 
-                                        <th scope="col">Tax</th>
+                                        <th scope="col">Service Charges</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>

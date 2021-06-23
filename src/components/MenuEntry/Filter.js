@@ -102,9 +102,9 @@ class Filter extends Component {
     }
   };
 
-  activateFilterType = async (id) => {
+  activateFilterType = async (id, name) => {
     const { value } = await ConfirmBox({
-      text: "Do you want to Enable status ?",
+      text: `Do you want to Enable ${name} ?`,
     });
     if (value) {
       let json = {
@@ -116,9 +116,9 @@ class Filter extends Component {
     }
   };
 
-  inActivateFilterType = async (id) => {
+  inActivateFilterType = async (id, name) => {
     const { value } = await ConfirmBox({
-      text: "Do you want to Disable status ?",
+      text: `Do you want to Disable ${name} ?`,
     });
     if (value) {
       let json = {
@@ -129,9 +129,9 @@ class Filter extends Component {
     }
   };
 
-  deleteFilterType = async (id) => {
+  deleteFilterType = async (id, name) => {
     const { value } = await ConfirmBox({
-      text: "Do you want to Remove ?",
+      text: `Do you want to Remove ${name} ?`,
     });
     if (value) {
       let json = {
@@ -224,14 +224,20 @@ class Filter extends Component {
                                 className="btn-youtube"
                                 size="sm"
                                 onClick={() => {
-                                  this.deleteFilterType(item._id);
+                                  this.deleteFilterType(item._id, item.name);
                                 }}
                               >
                                 <i className="fas fa-trash-alt text-white"></i>
                               </CButton>
                             </CTooltip>
 
-                            <CTooltip content="Change Status">
+                            <CTooltip
+                              content={
+                                !item.is_deleted
+                                  ? `Disable ${item.name}`
+                                  : `Enable ${item.name}`
+                              }
+                            >
                               <CButton
                                 className={`${
                                   !item.is_deleted ? "bg1" : "btn-youtube"
@@ -239,8 +245,14 @@ class Filter extends Component {
                                 size="sm"
                                 onClick={() => {
                                   item.is_deleted
-                                    ? this.activateFilterType(item._id)
-                                    : this.inActivateFilterType(item._id);
+                                    ? this.activateFilterType(
+                                        item._id,
+                                        item.name
+                                      )
+                                    : this.inActivateFilterType(
+                                        item._id,
+                                        item.name
+                                      );
                                 }}
                               >
                                 <i className="fas fa-ban text-white" />
@@ -492,7 +504,6 @@ class Filter extends Component {
           onsaveBulk={(data) => this.props.onsaveBulk(data)}
           filter_type_id={filter_type_id}
         />
-        ;
       </>
     );
   }

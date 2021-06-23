@@ -121,7 +121,7 @@ class Index extends Component {
                     {this.state.show === true ? (
                       <CTooltip content="expanded">
                         <i
-                          className="fas fa-caret-down text1 mr-2  fa-2x"
+                          className="fas fa-caret-down text1 fa-2x"
                           onClick={() =>
                             this.setState({
                               show: false,

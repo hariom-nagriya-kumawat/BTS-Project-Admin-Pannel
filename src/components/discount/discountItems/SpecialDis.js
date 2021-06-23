@@ -10,7 +10,7 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { connect } from "react-redux";
-import moment from 'moment';
+import moment from "moment";
 import {
   addDayDiscountRequest,
   getDayDiscountRequest,
@@ -32,7 +32,6 @@ class SpecialDis extends Component {
       selectRowId: "",
       selectRowClick: 0,
     };
-
   }
   componentDidMount() {
     this.props.getHoursDiscountData();
@@ -41,25 +40,21 @@ class SpecialDis extends Component {
     if (
       DiscountReducerData &&
       DiscountReducerData.updateReq &&
-      DiscountReducerData.updateReq !==
-      this.props.DiscountReducerData.updateReq
+      DiscountReducerData.updateReq !== this.props.DiscountReducerData.updateReq
     ) {
       this.setState({
         newRow: false,
         min_order_value: 0,
         selectRowClick: 1,
         tax: 0,
-        discount:0.0,
-        type:"",
-      })
+        discount: 0.0,
+        type: "",
+      });
     }
-  }
+  };
 
   onRowClick = (item) => {
-    const {
-      selectRowId,
-      selectRowClick,
-    } = this.state;
+    const { selectRowId, selectRowClick } = this.state;
 
     this.setState({
       selectRowId: item._id,
@@ -68,15 +63,13 @@ class SpecialDis extends Component {
     });
   };
   handleChange = (e) => {
-    const {
-      selectRowId,
-    } = this.state;
+    const { selectRowId } = this.state;
     const { target } = e;
     const { value, name } = target;
     this.props.onUpdateData({
       [name]: value,
       discount_id: selectRowId,
-    })
+    });
     this.setState({
       [name]: value,
       errors: {
@@ -85,7 +78,7 @@ class SpecialDis extends Component {
       },
     });
   };
-  keypressHandler = event => {
+  keypressHandler = (event) => {
     if (event.key === "Enter") {
       this.onAddDiscount();
     }
@@ -101,11 +94,11 @@ class SpecialDis extends Component {
       min_order_value: 0.0,
       is_deleted: false,
       is_removed: false,
-      discount_date: new Date()
-    }
-    this.props.onAddHoursDiscount(json)
-  }
-  keypressHandler1 = event => {
+      discount_date: new Date(),
+    };
+    this.props.onAddHoursDiscount(json);
+  };
+  keypressHandler1 = (event) => {
     if (event.key === "Enter") {
       this.onUpdateData();
     }
@@ -119,27 +112,22 @@ class SpecialDis extends Component {
       is_deleted: false,
       is_removed: false,
       discount_id: selectRowId,
-    })
-  }
+    });
+  };
   onRemove = async () => {
     const { selectRowId } = this.state;
     const { value } = await ConfirmBox({
       text: "Do you want to Remove ?",
     });
     if (value) {
-      this.props.onUpdateData(
-        {
-          is_removed: true,
-          discount_id: selectRowId,
-
-        }
-      )
-
+      this.props.onUpdateData({
+        is_removed: true,
+        discount_id: selectRowId,
+      });
     }
   };
 
   render() {
-
     const { DiscountReducerData } = this.props;
 
     const {
@@ -147,17 +135,17 @@ class SpecialDis extends Component {
       type,
       is_deleted,
       newRow,
-      selectRowId, min_order_value, selectRowClick, discount_date
-
+      selectRowId,
+      min_order_value,
+      selectRowClick,
+      discount_date,
     } = this.state;
     return (
       <>
         <CCard>
           <CCardHeader className="d-flex flex-row justify-content-between">
             {" "}
-            <h6>
-              Special Discount
-            </h6>
+            <h6>Special Discount</h6>
             <div>
               <CTooltip content="remove">
                 <CButton
@@ -175,7 +163,8 @@ class SpecialDis extends Component {
                   onClick={() => this.setState({ newRow: true })}
                 >
                   <i class="fas fa-plus" />
-                </CButton></CTooltip>
+                </CButton>
+              </CTooltip>
             </div>
           </CCardHeader>
 
@@ -186,10 +175,10 @@ class SpecialDis extends Component {
                   <tr>
                     <th className="td2">Discount</th>
                     <th className="td2">Type</th>
-                    <th className="td2 px-3">Date_Day_Time</th>
-                    <th className="td2">Minimum_Order_Value</th>
+                    <th className="td2 px-3">Date Day Time</th>
+                    <th className="td2">Minimum Order Value</th>
                     {/* <th className="td2">Discount_Type</th> */}
-                    <th className="td2">Payment_Type</th>
+                    {/* <th className="td2">Payment_Type</th> */}
                     <th className="td2">Action</th>
                   </tr>
                 </thead>
@@ -203,12 +192,10 @@ class SpecialDis extends Component {
                           value={discount}
                           onChange={(e) =>
                             this.setState({
-                              [e.target.name]:
-                                e.target.value,
+                              [e.target.name]: e.target.value,
                             })
                           }
-
-                          onKeyPress={event => this.keypressHandler(event)}
+                          onKeyPress={(event) => this.keypressHandler(event)}
                           onBlur={() => this.onAddDiscount()}
                         />
                       </td>
@@ -216,23 +203,21 @@ class SpecialDis extends Component {
                       <td></td>
                       <td></td>
 
-                      <td></td>
+                      {/* <td></td> */}
                       <td>
                         <div className="d-flex flex-row justify-content-center">
                           <CBadge
-                            className={`${!is_deleted
-                              ? "bg1"
-                              : "bg-secondary"
-                              } text-white px-1 pt-1 pb-1`}
+                            className={`${
+                              !is_deleted ? "bg1" : "bg-secondary"
+                            } text-white px-1 pt-1 pb-1`}
                           >
                             Enable
                           </CBadge>
 
                           <CBadge
-                            className={`${is_deleted
-                              ? "btn-youtube"
-                              : "bg-secondary"
-                              } text-white px-1 pt-1 pb-1 ml-1`}
+                            className={`${
+                              is_deleted ? "btn-youtube" : "bg-secondary"
+                            } text-white px-1 pt-1 pb-1 ml-1`}
                           >
                             Disable
                           </CBadge>
@@ -240,23 +225,18 @@ class SpecialDis extends Component {
                       </td>
                     </tr>
                   ) : null}
-                  {DiscountReducerData && DiscountReducerData.data &&
-                    DiscountReducerData.data.length ? (
+                  {DiscountReducerData &&
+                  DiscountReducerData.data &&
+                  DiscountReducerData.data.length ? (
                     DiscountReducerData.data.map((itm, ind) => {
                       return (
                         <tr
                           key={ind}
-                          onClick={() =>
-                            this.onRowClick(itm)
-                          }
-                          className={
-                            selectRowId === itm._id ? "bg2" : ""
-                          }
+                          onClick={() => this.onRowClick(itm)}
+                          className={selectRowId === itm._id ? "bg2" : ""}
                         >
-                          <td >
-                            {selectRowId === itm._id &&
-                              selectRowClick > 1 ? (
-
+                          <td>
+                            {selectRowId === itm._id && selectRowClick > 1 ? (
                               <input
                                 className="w-100"
                                 type="text"
@@ -264,89 +244,85 @@ class SpecialDis extends Component {
                                 value={discount}
                                 onChange={(e) =>
                                   this.setState({
-                                    [e.target.name]:
-                                      e.target.value,
-
+                                    [e.target.name]: e.target.value,
                                   })
                                 }
-                                onKeyPress={event => this.keypressHandler1(event)}
-                                onBlur={() =>
-                                  this.onUpdateData()}
+                                onKeyPress={(event) =>
+                                  this.keypressHandler1(event)
+                                }
+                                onBlur={() => this.onUpdateData()}
                               />
                             ) : itm.discount ? (
                               itm.discount
                             ) : null}
                           </td>
-                          <td >
-                            {selectRowId === itm._id &&
-                              selectRowClick > 1 ? (
-                              <select onChange={(e) => {
-                                this.handleChange(e);
-                              }}
+                          <td>
+                            {selectRowId === itm._id && selectRowClick > 1 ? (
+                              <select
+                                onChange={(e) => {
+                                  this.handleChange(e);
+                                }}
                                 name="type"
                                 value={type}
                               >
-                                <option value={null}>
-                                  Select One
-                                </option>
+                                <option value={null}>Select One</option>
 
-                                <option value="PERCENTAGE">
-                                  PERCENTAGE
-                                </option>
+                                <option value="PERCENTAGE">PERCENTAGE</option>
 
-                                <option value="FLAT">
-                                  FLAT
-                                </option>
+                                <option value="FLAT">FLAT</option>
                               </select>
                             ) : itm.type ? (
                               itm.type
                             ) : null}
                           </td>
                           <td>
-
-                            {selectRowId === itm._id &&
-                              selectRowClick > 1 ? (
+                            {selectRowId === itm._id && selectRowClick > 1 ? (
                               <DatePicker
                                 selected={discount_date}
-                                timeInputLabel="Time:"
+                                // timeInputLabel="Time:"
                                 dateFormat="yyyy/MM/dd h:mm aa"
                                 name="discount_date"
                                 value={discount_date}
-                                showTimeInput
-                                onChange={(e) => {
+                                showTimeSelect
+                                onChange={(date) => {
                                   this.setState({
-                                    discount_date: new Date(e)
-                                  })
+                                    discount_date: date,
+                                  });
                                 }}
+                                onKeyPress={({ key }) =>
+                                  key === "Enter"
+                                    ? this.props.onUpdateData({
+                                        discount_date: discount_date,
+                                        discount_id: selectRowId,
+                                      })
+                                    : null
+                                }
                                 onBlur={() =>
                                   this.props.onUpdateData({
                                     discount_date: discount_date,
                                     discount_id: selectRowId,
                                   })
                                 }
-
                               />
-
                             ) : itm.discount_date ? (
-                              moment(itm.discount_date).format('LLL')
+                              moment(itm.discount_date).format("LLL")
                             ) : null}
                           </td>
-                          <td >
-                            {selectRowId === itm._id &&
-                              selectRowClick > 1 ? (
+                          <td>
+                            {selectRowId === itm._id && selectRowClick > 1 ? (
                               <input
                                 type="text"
                                 name="min_order_value"
                                 value={min_order_value}
                                 onChange={(e) =>
                                   this.setState({
-                                    [e.target.name]:
-                                      e.target.value,
+                                    [e.target.name]: e.target.value,
                                   })
                                 }
-                                onKeyPress={event => this.keypressHandler1(event)}
-                                onBlur={() =>
-                                  this.onUpdateData()}
+                                onKeyPress={(event) =>
+                                  this.keypressHandler1(event)
+                                }
+                                onBlur={() => this.onUpdateData()}
                               />
                             ) : itm.min_order_value ? (
                               itm.min_order_value
@@ -381,69 +357,72 @@ class SpecialDis extends Component {
                             ) : null}
                           </td> */}
 
-
-                          <td>
-                            {selectRowId === itm._id &&
-                              selectRowClick > 1 ? (
-                              <select onChange={(e) => {
-                                this.handleChange(e);
-                              }}
+                          {/* <td>
+                            {selectRowId === itm._id && selectRowClick > 1 ? (
+                              <select
+                                onChange={(e) => {
+                                  this.handleChange(e);
+                                }}
                                 name="payment_type"
                               >
-                                <option value={null}>
-                                  Select One
-                                </option>
+                                <option value={null}>Select One</option>
 
-                                <option value="CARD">
-                                  CARD
-                                </option>
+                                <option value="CARD">CARD</option>
 
-                                <option value="WALLET">
-                                  WALLET
-                                </option>
+                                <option value="WALLET">WALLET</option>
 
-                                <option value="CASH">
-                                  CASH
-                                </option>
+                                <option value="CASH">CASH</option>
                               </select>
                             ) : itm.payment_type ? (
                               itm.payment_type
                             ) : null}
-                          </td>
+                          </td> */}
                           <td>
                             <div className="d-flex flex-row justify-content-center">
                               <CTooltip content="Change Status">
                                 <CBadge
-                                  className={`${!itm.is_deleted
-                                    ? "bg1"
-                                    : "bg-secondary text-dark"
-                                    } text-white px-1`}
-                                  onClick={() => this.setState({ selectRowId: itm._id, selectRowClick: 1 }, () =>
-                                    this.props.onUpdateData(
+                                  className={`${
+                                    !itm.is_deleted
+                                      ? "bg1"
+                                      : "bg-secondary text-dark"
+                                  } text-white px-1`}
+                                  onClick={() =>
+                                    this.setState(
                                       {
-                                        is_deleted: false,
-                                        discount_id: itm._id,
-                                      }
+                                        selectRowId: itm._id,
+                                        selectRowClick: 1,
+                                      },
+                                      () =>
+                                        this.props.onUpdateData({
+                                          is_deleted: false,
+                                          discount_id: itm._id,
+                                        })
                                     )
-                                  )}
+                                  }
                                 >
                                   Enable
                                 </CBadge>
                               </CTooltip>
                               <CTooltip content="Change Status">
                                 <CBadge
-                                  className={`${itm.is_deleted
-                                    ? "btn-youtube"
-                                    : "bg-secondary text-dark"
-                                    } text-white px-1 ml-1`}
-                                  onClick={() => this.setState({ selectRowId: itm._id, selectRowClick: 1 }, () =>
-                                    this.props.onUpdateData(
+                                  className={`${
+                                    itm.is_deleted
+                                      ? "btn-youtube"
+                                      : "bg-secondary text-dark"
+                                  } text-white px-1 ml-1`}
+                                  onClick={() =>
+                                    this.setState(
                                       {
-                                        is_deleted: true,
-                                        discount_id: itm._id,
-                                      }
+                                        selectRowId: itm._id,
+                                        selectRowClick: 1,
+                                      },
+                                      () =>
+                                        this.props.onUpdateData({
+                                          is_deleted: true,
+                                          discount_id: itm._id,
+                                        })
                                     )
-                                  )}
+                                  }
                                 >
                                   Disable
                                 </CBadge>
@@ -469,7 +448,6 @@ class SpecialDis extends Component {
             </div>
           </CCardBody>
         </CCard>
-
       </>
     );
   }
@@ -488,8 +466,7 @@ const mapDispatchToProps = (dispatch) => {
     },
     onUpdateData: (data) => {
       dispatch(updateDayDiscountRequest(data));
-    }
-
+    },
   };
 };
 

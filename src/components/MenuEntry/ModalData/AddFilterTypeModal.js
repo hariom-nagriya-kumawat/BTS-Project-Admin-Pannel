@@ -78,14 +78,13 @@ const AddFilterTypeModal = (props) => {
           <CForm className="form-horizontal">
             <CFormGroup row>
               <CCol md="3">
-                <CLabel>Enter Filter Name</CLabel>
+                <CLabel>Name</CLabel>
               </CCol>
               <CCol xs="12" md="9">
                 <CInput
                   type="text"
                   name="name"
                   value={allergy.name}
-                  placeholder="name..."
                   autoComplete="name"
                   onChange={(e) => handleChange(e)}
                   invalid={errors && errors.name ? true : false}
@@ -111,7 +110,8 @@ const AddFilterTypeModal = (props) => {
               </CButton>
             </CCol>
             <CCol xs="6">
-              <CButton color="secondary" onClick={() => props.onClose()}>
+              <CButton className="btn-youtube text-white"
+                onClick={() => props.onClose()}>
                 Cancel
               </CButton>
             </CCol>
