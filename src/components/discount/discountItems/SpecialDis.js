@@ -309,7 +309,7 @@ class SpecialDis extends Component {
                               <DatePicker
                                 selected={discount_date}
                                 timeInputLabel="Time:"
-                                dateFormat="yyyy/MM/dd h:mm aa"
+                                dateFormat="h:mm aa"
                                 name="discount_date"
                                 value={discount_date}
                                 showTimeInput
@@ -318,12 +318,12 @@ class SpecialDis extends Component {
                                     discount_date: new Date(e)
                                   })
                                 }}
-                                onBlur={() =>
-                                  this.props.onUpdateData({
-                                    discount_date: discount_date,
-                                    discount_id: selectRowId,
-                                  })
-                                }
+                                // onBlur={() =>
+                                //   this.props.onUpdateData({
+                                //     discount_date: discount_date,
+                                //     discount_id: selectRowId,
+                                //   })
+                                // }
 
                               />
 

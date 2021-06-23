@@ -305,3 +305,7 @@ input {
 .else {
   font-size: 0.75em;
 }
+html:not([dir="rtl"]) .modal-header .close{
+  color: #fff !important;
+  font-weight: 600;
+}

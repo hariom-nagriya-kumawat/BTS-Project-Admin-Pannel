@@ -14,6 +14,7 @@ import { OrderDiscountLogic } from "./Discount/OrderDiscount";
 import {ServiceDiscountLogic} from "./Discount/ServiceDiscount";
 import {DeliveryChargesLogic} from "./Discount/DeliveryCharges";
 import {OptionsLogic} from "./Options";
+import {OptionsAttributeLogic} from "./OptionsAttribute";
 export const redirectToLogic = createLogic({
   type: "REDIRET_TO",
   async process({ action }, dispatch, done) {
@@ -36,5 +37,6 @@ export default [
   ...ServiceDiscountLogic,
   ...DeliveryChargesLogic,
   ...OptionsLogic,
+  ...OptionsAttributeLogic,
   redirectToLogic,
 ];

@@ -5,25 +5,25 @@ import {
     CCardBody,
     CCardHeader,
     CTooltip,
-    CBadge, CSwitch, CCollapse
+    CBadge
 } from "@coreui/react";
 import "react-datepicker/dist/react-datepicker.css";
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
-import Loader from "src/containers/Loader/Loader";
 import {
-    addOptionsRequest,
-    getOptionsRequest,
-    updateOptionsRequest,
+    addOptionsAttributeRequest,
+    getOptionsAttributeRequest,
+    updateOptionsAttributeRequest,
 } from "../../actions";
 
 import { ConfirmBox } from "../../Helpers/SweetAlert";
+import Loader from "src/containers/Loader/Loader";
 class SpecialDis extends Component {
     constructor(props) {
         super(props);
         this.state = {
             name: "",
-            max_qty: 0,
+            price: 0,
             is_multi_selected: true,
             is_deleted: false,
             is_removed: false,
@@ -34,7 +34,7 @@ class SpecialDis extends Component {
 
     }
     componentDidMount() {
-        this.props.getOptionsData();
+        this.props.getOptionsAttributeData();
     }
     componentDidUpdate = ({ ReducerData }) => {
         if (
@@ -47,7 +47,7 @@ class SpecialDis extends Component {
                 newRow: false,
                 selectRowClick: 1,
                 name: "",
-                max_qty: 0,
+                price: 0,
                 selectRowId: "", show: true
 
             })
@@ -59,11 +59,11 @@ class SpecialDis extends Component {
             selectRowId,
             selectRowClick,
         } = this.state;
-        if (selectRowClick === 1) { this.props.setOptionId(item._id) }
+
         this.setState({
             selectRowId: item._id,
             name: item.name,
-            max_qty: item.max_qty,
+            price: item.price,
             newRow: false,
             selectRowClick: selectRowId === item._id ? selectRowClick + 1 : 1,
         });
@@ -76,7 +76,7 @@ class SpecialDis extends Component {
         const { value, name } = target;
         this.props.onUpdateData({
             [name]: value,
-            option_id: selectRowId,
+            attribute_id: selectRowId,
         })
         this.setState({
             [name]: value,
@@ -88,20 +88,25 @@ class SpecialDis extends Component {
     };
     keypressHandler = event => {
         if (event.key === "Enter") {
-            this.onAddAtrribute();
+            this.onAddDiscount();
         }
     };
 
-    onAddAtrribute = () => {
-        const { name, max_qty } = this.state;
-        let json = {
-            "name": name,
-            "max_qty": parseFloat(max_qty),
-            "is_multi_selected": false,
-            "is_deleted": false,
-            "is_removed": false,
+    onAddDiscount = () => {
+        const { name, price } = this.state;
+        if (this.props.Option_id === "") {
+            toast.error("Please select option");
+            return false
+        } else {
+            let json = {
+                "name": name,
+                "option_id": this.props.Option_id,
+                "price": parseFloat(0.0),
+                "is_deleted": false,
+                "is_removed": false,
+            }
+            this.props.onAddOptionsAttribute(json)
         }
-        this.props.onAddOptions(json)
     }
     keypressHandler1 = event => {
         if (event.key === "Enter") {
@@ -111,13 +116,13 @@ class SpecialDis extends Component {
 
     onUpdateData = () => {
         const { selectRowId, name,
-            max_qty } = this.state;
+            price } = this.state;
         this.props.onUpdateData({
-            max_qty: parseFloat(max_qty),
+            price: parseFloat(price),
             name: name,
             is_deleted: false,
             is_removed: false,
-            option_id: selectRowId,
+            attribute_id: selectRowId,
         })
     }
     onRemove = async () => {
@@ -133,7 +138,7 @@ class SpecialDis extends Component {
                 this.props.onUpdateData(
                     {
                         is_removed: true,
-                        option_id: selectRowId,
+                        attribute_id: selectRowId,
 
                     }
                 )
@@ -142,27 +147,39 @@ class SpecialDis extends Component {
         }
     };
 
+    getName = (Id) => {
+        const { ReducerDataOptions } = this.props;
+        let data = "";
+        if (
+            ReducerDataOptions &&
+            ReducerDataOptions.data &&
+            ReducerDataOptions.data.length
+        ) {
+            data = ReducerDataOptions.data.filter((itm) => itm._id === Id)[0];
+        }
+        return data && data.name ? data.name : "";
+    };
+
     render() {
 
-        const { ReducerData } = this.props;
-
+        const { ReducerData, Option_id } = this.props;
         const {
             name,
-            max_qty,
+            price,
             is_multi_selected,
             is_deleted,
             is_removed,
             newRow,
             selectRowId,
-            selectRowClick
+            selectRowClick, show
         } = this.state;
         return (
             <>
                 <CCard>
                     <CCardHeader className="d-flex flex-row justify-content-between pr-0">
-                        {" "}
+
                         <h6>
-                            <i className="fas fa-list-alt mr-2"></i>Options
+                            <i className="fas fa-list-alt mr-2"></i>Options Attribute
                         </h6>
                         <div className="d-flex flex-row">
                             <CTooltip content="remove">
@@ -182,6 +199,7 @@ class SpecialDis extends Component {
                                 >
                                     <i class="fas fa-plus" />
                                 </CButton></CTooltip>
+
                         </div>
                     </CCardHeader>
                     <CCardBody>
@@ -190,8 +208,8 @@ class SpecialDis extends Component {
                                 <thead className="table1header">
                                     <tr>
                                         <th className="w-25">Name</th>
-                                        <th className="w-25">Max Qty	</th>
-                                        <th className="w-25">Multi Selected	</th>
+                                        <th className="w-25">Price</th>
+                                        <th className="w-25">Options</th>
                                         <th className="w-50">Action</th>
                                     </tr>
                                 </thead>
@@ -211,10 +229,12 @@ class SpecialDis extends Component {
                                                     }
 
                                                     onKeyPress={event => this.keypressHandler(event)}
-                                                    onBlur={() => this.onAddAtrribute()}
+                                                    onBlur={() => this.onAddDiscount()}
                                                 />
                                             </td>
                                             <td></td>
+                                            <td>
+                                                {this.getName(this.props.Option_id)}</td>
                                             <td>
                                                 <div className="d-flex flex-row justify-content-center">
                                                     <CBadge
@@ -282,8 +302,8 @@ class SpecialDis extends Component {
                                                                 selectRowClick > 1 ? (
                                                                 <input
                                                                     type="text"
-                                                                    name="max_qty"
-                                                                    value={max_qty}
+                                                                    name="price"
+                                                                    value={price}
                                                                     onChange={(e) =>
                                                                         this.setState({
                                                                             [e.target.name]:
@@ -294,34 +314,15 @@ class SpecialDis extends Component {
                                                                     onBlur={() =>
                                                                         this.onUpdateData()}
                                                                 />
-                                                            ) : itm.max_qty ? (
-                                                                itm.max_qty
+                                                            ) : itm.price ? (
+                                                                itm.price
                                                             ) : null}
                                                         </td>
 
 
                                                         <td>
-                                                            <CSwitch
-                                                                className={"sm-1"}
-                                                                variant={"3d"}
-                                                                name="is_multi_selected"
-                                                                checked={itm.is_multi_selected}
-                                                                onChange={(e) =>
-                                                                    this.setState(
-                                                                        {
-                                                                            selectRowId: itm._id,
-                                                                            selectRowClick: 1,
-                                                                        },
-                                                                        () =>
-                                                                            this.props.onUpdateData(
-                                                                                {
-                                                                                    option_id: itm._id,
-                                                                                    is_multi_selected: !itm.is_multi_selected,
-                                                                                }
-                                                                            )
-                                                                    )
-                                                                }
-                                                            />
+
+                                                            {this.getName(itm.option_id)}
                                                         </td>
                                                         <td>
                                                             <div className="d-flex flex-row justify-content-center">
@@ -335,7 +336,7 @@ class SpecialDis extends Component {
                                                                             this.props.onUpdateData(
                                                                                 {
                                                                                     is_deleted: false,
-                                                                                    option_id: itm._id,
+                                                                                    attribute_id: itm._id,
                                                                                 }
                                                                             )
                                                                         )}
@@ -353,7 +354,7 @@ class SpecialDis extends Component {
                                                                             this.props.onUpdateData(
                                                                                 {
                                                                                     is_deleted: true,
-                                                                                    option_id: itm._id,
+                                                                                    attribute_id: itm._id,
                                                                                 }
                                                                             )
                                                                         )}
@@ -393,19 +394,20 @@ class SpecialDis extends Component {
     }
 }
 const mapStateToProps = (state) => ({
-    ReducerData: state.OptionsReducer,
+    ReducerData: state.OptionsAttributeReducer,
+    ReducerDataOptions: state.OptionsReducer,
 });
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onAddOptions: (data) => {
-            dispatch(addOptionsRequest(data));
+        onAddOptionsAttribute: (data) => {
+            dispatch(addOptionsAttributeRequest(data));
         },
-        getOptionsData: (data) => {
-            dispatch(getOptionsRequest(data));
+        getOptionsAttributeData: (data) => {
+            dispatch(getOptionsAttributeRequest(data));
         },
         onUpdateData: (data) => {
-            dispatch(updateOptionsRequest(data));
+            dispatch(updateOptionsAttributeRequest(data));
         }
 
     };
