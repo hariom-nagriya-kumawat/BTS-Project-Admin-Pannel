@@ -11,17 +11,20 @@ import {
   CTabs,
   CCollapse,
   CTooltip,
+  CButton, CCardHeader
 } from "@coreui/react";
 import Category from "./Category";
 import SubCategory from "./SubCategory";
 import Item from "./Item";
 import Filter from "./Filter";
 import Options from "./Options";
+import OptionsAttribute from "./OptionsAttribute";
 // import FoodType from "./FoodType";
 import {
   getCategoriesRequest,
   getSubCategoriesRequest,
   getListItemsRequest,
+  getOptionsAttributeRequest,
 } from "../../actions";
 import { connect } from "react-redux";
 class Index extends Component {
@@ -33,6 +36,8 @@ class Index extends Component {
       pannelType: "E-COM",
       categoryID: "",
       subCategoryId: "",
+      Option_id: "",
+      show1: false,
     };
   }
   onTabChange = (idx) => {
@@ -67,6 +72,13 @@ class Index extends Component {
     if (data) filter.category_id = data;
     this.props.getItemsData(filter);
   };
+
+  setOptionId = (data) => {
+    const { Option_id } = this.state;
+    this.props.getOptionsAttributeData({ option_id: data })
+    this.setState({ Option_id: data });
+  };
+
   setSubCId = (data) => {
     const { categoryID, pannelType } = this.state;
     this.setState({ subCategoryId: data });
@@ -82,7 +94,8 @@ class Index extends Component {
     // });
   };
   render() {
-    const { show, active, categoryID, pannelType, subCategoryId } = this.state;
+    const { show, show1, active, categoryID, pannelType, subCategoryId, Option_id } = this.state;
+    console.log("Option_id", Option_id)
     return (
       <>
         <Filter {...this.props} />
@@ -231,7 +244,52 @@ class Index extends Component {
             </CTabs>
           </CCol>
           <CCol xs="12">
-            <Options />
+
+            <CCard>
+              <CCardHeader className="d-flex flex-row justify-content-between pr-0">
+                {" "}
+                <h6>
+
+                  <i className="fas fa-list-alt mr-2"></i>Options List
+                </h6>
+                <div className="d-flex flex-row">
+
+                  {this.state.show === true ? (
+                    <i
+                      className="fas fa-caret-down text1 mr-2 fa-2x"
+                      onClick={() =>
+                        this.setState({
+                          show1: false,
+                        })
+                      }
+                    />
+                  ) : (
+                    <i
+                      className="fas fa-caret-right  mr-2 fa-2x"
+                      aria-hidden="true"
+                      onClick={() =>
+                        this.setState({
+                          show1: true,
+                        })
+                      }
+                    />
+                  )}
+                </div>
+              </CCardHeader></CCard>
+
+            <CCollapse show={show1}>
+              <CRow>
+                <CCol xs="6">
+                  <Options setOptionId={this.setOptionId} />
+                </CCol>
+
+                <CCol xs="6">
+
+                  <OptionsAttribute Option_id={Option_id} />
+                </CCol>
+              </CRow>
+
+            </CCollapse>
           </CCol>
         </CRow>
 
@@ -250,6 +308,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     getItemsData: (data) => {
       dispatch(getListItemsRequest(data));
+    },
+    getOptionsAttributeData: (data) => {
+      dispatch(getOptionsAttributeRequest(data));
     },
   };
 };

@@ -12,6 +12,7 @@ import {
 import "react-datepicker/dist/react-datepicker.css";
 import { connect } from "react-redux";
 import { toast } from "react-toastify";
+import Loader from "src/containers/Loader/Loader";
 import {
   addOptionsRequest,
   getOptionsRequest,
@@ -79,13 +80,50 @@ class SpecialDis extends Component {
       },
     });
   };
+
   keypressHandler = (event) => {
     if (event.key === "Enter") {
       this.onAddDiscount();
     }
   };
 
-  onAddDiscount = () => {
+  onRowClick = (item) => {
+    const { selectRowId, selectRowClick } = this.state;
+    if (selectRowClick === 1) {
+      this.props.setOptionId(item._id);
+    }
+    this.setState({
+      selectRowId: item._id,
+      name: item.name,
+      max_qty: item.max_qty,
+      newRow: false,
+      selectRowClick: selectRowId === item._id ? selectRowClick + 1 : 1,
+    });
+  };
+
+  handleChange = (e) => {
+    const { selectRowId } = this.state;
+    const { target } = e;
+    const { value, name } = target;
+    this.props.onUpdateData({
+      [name]: value,
+      option_id: selectRowId,
+    });
+    this.setState({
+      [name]: value,
+      errors: {
+        ...this.state.errors,
+        [name]: false,
+      },
+    });
+  };
+  keypressHandler = (event) => {
+    if (event.key === "Enter") {
+      this.onAddAtrribute();
+    }
+  };
+
+  onAddAtrribute = () => {
     const { name, max_qty } = this.state;
     let json = {
       name: name,
@@ -95,11 +133,6 @@ class SpecialDis extends Component {
       is_removed: false,
     };
     this.props.onAddOptions(json);
-  };
-  keypressHandler1 = (event) => {
-    if (event.key === "Enter") {
-      this.onUpdateData();
-    }
   };
 
   onUpdateData = () => {
