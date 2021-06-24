@@ -391,7 +391,7 @@ class ListItems extends Component {
       <>
         <CCard>
           <CCardHeader className="d-flex  flex-row justify-content-between">
-            <h6>
+            <h6 className="pt-1">
               <i className="fas fa-list-alt mr-2"></i>List Of Items
             </h6>
             <div>
@@ -821,12 +821,12 @@ class ListItems extends Component {
                                               }
                                               onKeyPress={({ key }) =>
                                                 key === "Enter"
-                                                  ?this.props.onUpdateItems({
-                                                    online_price: parseInt(
-                                                      updateItemData.online_price
-                                                    ),
-                                                    item_id: selectRowId,
-                                                  })
+                                                  ? this.props.onUpdateItems({
+                                                      online_price: parseInt(
+                                                        updateItemData.online_price
+                                                      ),
+                                                      item_id: selectRowId,
+                                                    })
                                                   : null
                                               }
                                               onBlur={() =>
@@ -861,12 +861,12 @@ class ListItems extends Component {
                                               }
                                               onKeyPress={({ key }) =>
                                                 key === "Enter"
-                                                  ?this.props.onUpdateItems({
-                                                    table_price: parseInt(
-                                                      updateItemData.table_price
-                                                    ),
-                                                    item_id: selectRowId,
-                                                  })
+                                                  ? this.props.onUpdateItems({
+                                                      table_price: parseInt(
+                                                        updateItemData.table_price
+                                                      ),
+                                                      item_id: selectRowId,
+                                                    })
                                                   : null
                                               }
                                               onBlur={() =>
@@ -900,15 +900,15 @@ class ListItems extends Component {
                                                 })
                                               }
                                               onKeyPress={({ key }) =>
-                                              key === "Enter"
-                                                ?this.props.onUpdateItems({
-                                                  tw_price: parseInt(
-                                                    updateItemData.tw_price
-                                                  ),
-                                                  item_id: selectRowId,
-                                                })
-                                                : null
-                                            }
+                                                key === "Enter"
+                                                  ? this.props.onUpdateItems({
+                                                      tw_price: parseInt(
+                                                        updateItemData.tw_price
+                                                      ),
+                                                      item_id: selectRowId,
+                                                    })
+                                                  : null
+                                              }
                                               onBlur={() =>
                                                 this.props.onUpdateItems({
                                                   tw_price: parseInt(
@@ -1003,7 +1003,7 @@ class ListItems extends Component {
                                                 () =>
                                                   this.props.onUpdateItems({
                                                     item_id: item._id,
-                                                    is_web:!item.is_web,
+                                                    is_web: !item.is_web,
                                                   })
                                               )
                                             }

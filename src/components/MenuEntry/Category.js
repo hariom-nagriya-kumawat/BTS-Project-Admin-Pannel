@@ -329,8 +329,8 @@ class Category extends Component {
       <>
         <CCard>
           <CCardHeader className="d-flex  flex-row justify-content-between">
-            <h6>
-              <i className="fas fa-list-alt mr-2"></i>Category List
+            <h6 className="pt-1">
+              <i className="fas fa-list-alt mr-2"></i>Category Name
             </h6>
             <div>
               <CTooltip content="remove">
@@ -375,21 +375,21 @@ class Category extends Component {
             <DragDropContext onDragEnd={this.onDragEnd}>
               <div className="table-responsive table1div">
                 <table
-                  className="table table-bordered table-sm"
+                  className="table table-bordered"
                   id="productSizes"
                 >
                   <thead className="table1header">
                     <tr>
-                      <th className="td2">Order</th>
-                      <th className="td2">Name</th>
-                      <th className="td2">Description</th>
-                      <th className="td2">Allergy Selection</th>
-                      <th className="td2">Food Type Selection</th>
-                      <th className="td2">For Web</th>
-                      <th className="td2">Fot TW</th>
-                      <th className="td2">Discount</th>
-                      <th className="td2">Pannel</th>
-                      <th className="td2">Action</th>
+                      <th className = "mintd2" >Order</th>
+                      <th >Name</th>
+                      <th className = "maxth2" >Description</th>
+                      <th className = "maxth2">Allergy Selection</th>
+                      <th className = "maxth2">Food Type Selection</th>
+                      <th >For Web</th>
+                      <th >Fot TW</th>
+                      <th >Discount</th>
+                      <th >Pannel</th>
+                      <th >Action</th>
                     </tr>
                   </thead>
                   <Droppable droppableId="table">
@@ -525,10 +525,10 @@ class Category extends Component {
                                           ) : null}
                                         </td>
 
-                                        <td>
+                                        <td className = "maxtd2">
                                           {selectRowId === item._id &&
                                           selectRowClick > 1 ? (
-                                            <input
+                                            <textarea rows="3" cols="35"
                                               className="w-100"
                                               type="text"
                                               name="description"

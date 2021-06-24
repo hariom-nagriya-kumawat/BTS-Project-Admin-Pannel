@@ -194,7 +194,7 @@ class DeliveryCharges extends Component {
                                         <th>Sr.</th>
                                         <th scope="col">Minimum Order Value</th>
                                         <th scope="col">Maximum Order Value</th>
-                                        <th scope="col">Tax</th>
+                                        <th scope="col">Delivery Charges</th>
                                         <th>Type</th>
                                         <th scope="col">Action</th>
                                     </tr>

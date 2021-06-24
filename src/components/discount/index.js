@@ -17,27 +17,34 @@ import Pickup from "./conditionItems/DiscountPickup";
 import Delivery from "./conditionItems/DiscountDelivery";
 import DiscountService from "./conditionItems/DiscountService";
 import DeliveryCharges from "./conditionItems/DeliveryCharges";
+import PAYMENT_TYPE from "./discountCategory/Payment";
+import REDUNDANT_CART from "./discountCategory/Redundant";
+import ONE_TIME_SUBSCRIBER from "./discountCategory/OneTimeSubscriber";
 class Index extends Component {
   constructor(props) {
     super(props);
     this.state = {
       show: false,
-      show1: false,
+      show1: true,
+      
+      show2: false,
     };
   }
 
   render() {
-    const { show, show1 } = this.state;
+    const { show, show1,show2 } = this.state;
     return (
       <>
-        <CCard className="w-100">
-          <CCardHeader className="d-flex flex-row justify-content-between w-100 bg1">
-            <h6 className="text-white mt-1">CHARGES & CONDITIONS</h6>
+        <CCard>
+          <CCardHeader className="d-flex flex-row justify-content-between pr-0">
+            <h6 className="pt-1">
+              <i className="fas fa-list-alt mr-2"></i>Charges & Conditions
+            </h6>
             <div>
-              {this.state.show === true ? (
+              {this.state.show1 === true ? (
                 <CTooltip content="expanded">
                   <i
-                    className="fa fa-angle-down text-white fa-2x"
+                    className="fas fa-caret-down text1 mr-2 fa-2x"
                     onClick={() =>
                       this.setState({
                         show1: false,
@@ -47,7 +54,7 @@ class Index extends Component {
                 </CTooltip>
               ) : (
                 <i
-                  className="fa fa-angle-right fa-2x  text-white mt-1"
+                  className="fas fa-caret-right mr-2 fa-2x"
                   aria-hidden="true"
                   onClick={() =>
                     this.setState({
@@ -76,17 +83,19 @@ class Index extends Component {
             <CCol xs="12" sm="6">
               <DeliveryCharges {...this.props} />
             </CCol>
-
           </CRow>
         </CCollapse>
-        <CCard className="w-100">
-          <CCardHeader className="d-flex flex-row justify-content-between w-100 bg1">
-            <h6 className="text-white">OTHER DISCOUNT</h6>
+
+        <CCard>
+          <CCardHeader className="d-flex flex-row justify-content-between pr-0">
+            <h6 className="pt-1">
+              <i className="fas fa-list-alt mr-2"></i>Other Discount
+            </h6>
             <div>
               {this.state.show === true ? (
                 <CTooltip content="expanded">
                   <i
-                    className="fa fa-angle-down text-white fa-2x"
+                    className="fas fa-caret-down text1 mr-2 fa-2x"
                     onClick={() =>
                       this.setState({
                         show: false,
@@ -97,7 +106,7 @@ class Index extends Component {
                 </CTooltip>
               ) : (
                 <i
-                  className="fa fa-angle-right text-white fa-2x mt-1"
+                  className="fas fa-caret-right mr-2 fa-2x"
                   aria-hidden="true"
                   onClick={() =>
                     this.setState({
@@ -113,26 +122,77 @@ class Index extends Component {
         <CCollapse show={show}>
           <CRow>
             <CCol xs="12" sm="6">
-              <HappyHourse />
+              <HappyHourse {...this.props} />
             </CCol>
 
             <CCol xs="12" sm="6">
-              <SpecialDis />
+              <SpecialDis {...this.props} />
             </CCol>
 
             <CCol xs="12" sm="6">
-              <LoyaltyCard />
+              <LoyaltyCard {...this.props} />
             </CCol>
 
             <CCol xs="12" sm="6">
-              <GiftCard />
+              <GiftCard {...this.props} />
             </CCol>
 
             <CCol xs="12" sm="6">
-              <Voucher />
+              <Voucher {...this.props} />
             </CCol>
+
             <CCol xs="12" sm="6">
-              <Coupon />
+              <Coupon {...this.props} />
+            </CCol>
+          </CRow>
+        </CCollapse>
+
+        
+        <CCard>
+          <CCardHeader className="d-flex flex-row justify-content-between pr-0">
+            <h6 className="pt-1">
+              <i className="fas fa-list-alt mr-2"></i>Discount Category
+            </h6>
+            <div>
+              {this.state.show2 === true ? (
+                <CTooltip content="expanded">
+                  <i
+                    className="fas fa-caret-down text1 mr-2 fa-2x"
+                    onClick={() =>
+                      this.setState({
+                        show2: false,
+                        openFilterId: "",
+                      })
+                    }
+                  />
+                </CTooltip>
+              ) : (
+                <i
+                  className="fas fa-caret-right mr-2 fa-2x"
+                  aria-hidden="true"
+                  onClick={() =>
+                    this.setState({
+                      show2: true,
+                    })
+                  }
+                />
+              )}
+            </div>
+          </CCardHeader>
+        </CCard>
+
+        <CCollapse show={show2}>
+          <CRow>
+            <CCol xs="12" sm="6">
+              <ONE_TIME_SUBSCRIBER {...this.props} />
+            </CCol>
+
+            <CCol xs="12" sm="6">
+              <REDUNDANT_CART {...this.props} />
+            </CCol>
+
+            <CCol xs="12" sm="6">
+              <PAYMENT_TYPE {...this.props} />
             </CCol>
           </CRow>
         </CCollapse>
