@@ -38,7 +38,7 @@ class Voucher extends Component {
       price: 0,
       amount: 0,
       card_type: "VOUCHER",
-      expiry_date: "",
+      expiry_date: new Date(),
     };
 
   }
@@ -69,7 +69,7 @@ class Voucher extends Component {
         image: "",
         price: 0,
         amount: 0,
-        expiry_date: "",
+        expiry_date: new Date(),
       })
     }
   }
@@ -243,14 +243,15 @@ class Voucher extends Component {
                   <tr>
 
                     <th className="td2">Name</th>
+                    <th className="td2">Code</th>
                     <th className="td2">Image</th>
                     <th className="td2">Price</th>
                     <th className="td2">Amount</th>
                     <th className="td2">Discount</th>
                     <th className="td2">Minimum Order</th>
-                    <th className="td2" >Expiry Days</th>
+                    <th className="td2" >Expiry Day Date</th>
                     <th className="td2">Type</th>
-                    <th className="td2">Code</th>
+                  
                     {/* <th className="td2">Discount_Type</th> */}
                     {/* <th className="td2">Payment_Type</th> */}
                     <th className="td2">Action</th>
@@ -351,6 +352,7 @@ class Voucher extends Component {
                                 itm.name
                               ) : null}
                             </td>
+                            <td></td>
                             <td>
                               {selectRowId === itm._id &&
                                 selectRowClick > 1 ? (
@@ -509,44 +511,15 @@ class Voucher extends Component {
 
                               {selectRowId === itm._id &&
                                 selectRowClick > 1 ? (
-                                  <input
-                                  className="w-100"
-                                  type="number"
-                                  name="expiry_date"
-                                  value={expiry_date}
-                                  onChange={(e) => {
-                                    this.setState({
-                                      [e.target.name]:
-                                        e.target.value,
-                                    })
-                                  }}
-                                  onKeyPress={({ key }) =>
-                                  key === "Enter"
-                                    ? this.props.onUpdateData({
-                                      expiry_date: expiry_date,
-                                      discount_id: selectRowId,
-                                      card_type: "VOUCHER",
-                                    })
-                                    : null
-                                }
-                                  onBlur={() =>
-                                    this.props.onUpdateData({
-                                      expiry_date: expiry_date,
-                                      discount_id: selectRowId,
-                                      card_type: "VOUCHER",
-                                    })
-                                  }
-                                />
-                                // <DatePicker
-                                //   selected={expiry_date}
-                                //   // timeInputLabel="Time:"
-                                //   dateFormat="yyyy/MM/dd h:mm aa"
+                                //   <input
+                                //   className="w-100"
+                                //   type="number"
                                 //   name="expiry_date"
                                 //   value={expiry_date}
-                                //   showTimeSelect
-                                //   onChange={(date) => {
+                                //   onChange={(e) => {
                                 //     this.setState({
-                                //       expiry_date: date
+                                //       [e.target.name]:
+                                //         e.target.value,
                                 //     })
                                 //   }}
                                 //   onKeyPress={({ key }) =>
@@ -565,8 +538,37 @@ class Voucher extends Component {
                                 //       card_type: "VOUCHER",
                                 //     })
                                 //   }
-
                                 // />
+                                <DatePicker
+                                  selected={expiry_date}
+                                  // timeInputLabel="Time:"
+                                  dateFormat="yyyy/MM/dd h:mm aa"
+                                  name="expiry_date"
+                                  value={expiry_date}
+                                  showTimeSelect
+                                  onChange={(date) => {
+                                    this.setState({
+                                      expiry_date: date
+                                    })
+                                  }}
+                                  onKeyPress={({ key }) =>
+                                  key === "Enter"
+                                    ? this.props.onUpdateData({
+                                      expiry_date: expiry_date,
+                                      discount_id: selectRowId,
+                                      card_type: "VOUCHER",
+                                    })
+                                    : null
+                                }
+                                  onBlur={() =>
+                                    this.props.onUpdateData({
+                                      expiry_date: expiry_date,
+                                      discount_id: selectRowId,
+                                      card_type: "VOUCHER",
+                                    })
+                                  }
+
+                                />
                               ) : itm.expiry_date ? (
                                 moment(itm.expiry_date).format('LLL')
                               ) : null}
@@ -652,7 +654,7 @@ class Voucher extends Component {
                                 itm.payment_type
                               ) : null}
                             </td> */}
-                            <td></td>
+                            
                             <td>
                               <div className="d-flex flex-row justify-content-center">
                                 <CTooltip content="Change Status">

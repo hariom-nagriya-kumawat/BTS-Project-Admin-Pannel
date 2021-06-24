@@ -17,17 +17,22 @@ import Pickup from "./conditionItems/DiscountPickup";
 import Delivery from "./conditionItems/DiscountDelivery";
 import DiscountService from "./conditionItems/DiscountService";
 import DeliveryCharges from "./conditionItems/DeliveryCharges";
+import PAYMENT_TYPE from "./discountCategory/Payment";
+import REDUNDANT_CART from "./discountCategory/Redundant";
+import ONE_TIME_SUBSCRIBER from "./discountCategory/OneTimeSubscriber";
 class Index extends Component {
   constructor(props) {
     super(props);
     this.state = {
       show: false,
       show1: true,
+      
+      show2: false,
     };
   }
 
   render() {
-    const { show, show1 } = this.state;
+    const { show, show1,show2 } = this.state;
     return (
       <>
         <CCard>
@@ -138,6 +143,56 @@ class Index extends Component {
 
             <CCol xs="12" sm="6">
               <Coupon {...this.props} />
+            </CCol>
+          </CRow>
+        </CCollapse>
+
+        
+        <CCard>
+          <CCardHeader className="d-flex flex-row justify-content-between pr-0">
+            <h6 className="pt-1">
+              <i className="fas fa-list-alt mr-2"></i>Discount Category
+            </h6>
+            <div>
+              {this.state.show2 === true ? (
+                <CTooltip content="expanded">
+                  <i
+                    className="fas fa-caret-down text1 mr-2 fa-2x"
+                    onClick={() =>
+                      this.setState({
+                        show2: false,
+                        openFilterId: "",
+                      })
+                    }
+                  />
+                </CTooltip>
+              ) : (
+                <i
+                  className="fas fa-caret-right mr-2 fa-2x"
+                  aria-hidden="true"
+                  onClick={() =>
+                    this.setState({
+                      show2: true,
+                    })
+                  }
+                />
+              )}
+            </div>
+          </CCardHeader>
+        </CCard>
+
+        <CCollapse show={show2}>
+          <CRow>
+            <CCol xs="12" sm="6">
+              <ONE_TIME_SUBSCRIBER {...this.props} />
+            </CCol>
+
+            <CCol xs="12" sm="6">
+              <REDUNDANT_CART {...this.props} />
+            </CCol>
+
+            <CCol xs="12" sm="6">
+              <PAYMENT_TYPE {...this.props} />
             </CCol>
           </CRow>
         </CCollapse>

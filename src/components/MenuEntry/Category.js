@@ -101,7 +101,10 @@ class Category extends Component {
         foodTypeData
           .filter((itm) => !itm.is_deleted)
           .map((item) => {
-            foodTypeOptions.push({ name: item.name ? item.name : "", id: item._id });
+            foodTypeOptions.push({
+              name: item.name ? item.name : "",
+              id: item._id,
+            });
             return true;
           });
       }
@@ -243,7 +246,7 @@ class Category extends Component {
         });
       });
     }
-    if (selectRowClick === 1) this.props.setCId(item._id);
+    if (selectRowId !== item._id) this.props.setCId(item._id);
     this.setState({
       selectRowId: item._id,
       addCategory: false,
@@ -380,16 +383,16 @@ class Category extends Component {
                 >
                   <thead className="table1header">
                     <tr>
-                      <th className="td2">Order</th>
-                      <th className="td2">Name</th>
-                      <th className="td2">Description</th>
-                      <th className="td2">Allergy Selection</th>
-                      <th className="td2">Food Type Selection</th>
-                      <th className="td2">For Web</th>
-                      <th className="td2">Fot TW</th>
-                      <th className="td2">Discount</th>
-                      <th className="td2">Pannel</th>
-                      <th className="td2">Action</th>
+                      <th className="mintd2">Order</th>
+                      <th>Name</th>
+                      <th className="maxth2">Description</th>
+                      <th className="maxth2">Allergy Selection</th>
+                      <th className="maxth2">Food Type Selection</th>
+                      <th className="">For Web</th>
+                      <th className="">Fot TW</th>
+                      <th className="">Discount</th>
+                      <th className="">Pannel</th>
+                      <th className="">Action</th>
                     </tr>
                   </thead>
                   <Droppable droppableId="table">
@@ -426,22 +429,25 @@ class Category extends Component {
                               <td></td>
                               <td>
                                 <CSwitch
-                                  className={"mx-1"}
                                   variant={"3d"}
+                                  shape={"pill"}
+                                  size={"md"}
                                   name="is_web"
                                 />
                               </td>
                               <td>
                                 <CSwitch
-                                  className={"mx-1"}
                                   variant={"3d"}
+                                  shape={"pill"}
+                                  size={"md"}
                                   name="is_tw"
                                 />
                               </td>
                               <td>
                                 <CSwitch
-                                  className={"mx-1"}
                                   variant={"3d"}
+                                  shape={"pill"}
+                                  size={"md"}
                                   name="is_discount_applied"
                                 />
                               </td>
@@ -525,12 +531,13 @@ class Category extends Component {
                                           ) : null}
                                         </td>
 
-                                        <td>
+                                        <td className="maxtd2">
                                           {selectRowId === item._id &&
                                           selectRowClick > 1 ? (
-                                            <input
+                                            <textarea
+                                              rows="3"
+                                              cols="35"
                                               className="w-100"
-                                              type="text"
                                               name="description"
                                               value={description}
                                               onChange={(e) =>
@@ -562,7 +569,7 @@ class Category extends Component {
                                           )}
                                         </td>
 
-                                        <td>
+                                        <td className="maxtd2">
                                           {selectRowId === item._id &&
                                           selectRowClick > 1 ? (
                                             <Multiselect
@@ -605,7 +612,7 @@ class Category extends Component {
                                             </>
                                           )}
                                         </td>
-                                        <td>
+                                        <td className="maxtd2">
                                           {selectRowId === item._id &&
                                           selectRowClick > 1 ? (
                                             <Multiselect
@@ -651,8 +658,9 @@ class Category extends Component {
 
                                         <td>
                                           <CSwitch
-                                            className={"mx-1"}
                                             variant={"3d"}
+                                            shape={"pill"}
+                                            size={"md"}
                                             name="is_web"
                                             checked={item.is_web}
                                             onChange={(e) =>
@@ -675,8 +683,9 @@ class Category extends Component {
 
                                         <td>
                                           <CSwitch
-                                            className={"mx-1"}
                                             variant={"3d"}
+                                            shape={"pill"}
+                                            size={"md"}
                                             name="is_tw"
                                             checked={item.is_tw}
                                             onChange={(e) =>
@@ -698,8 +707,9 @@ class Category extends Component {
                                         </td>
                                         <td>
                                           <CSwitch
-                                            className={"mx-1"}
                                             variant={"3d"}
+                                            shape={"pill"}
+                                            size={"md"}
                                             name="is_discount_applied"
                                             checked={item.is_discount_applied}
                                             onChange={(e) =>

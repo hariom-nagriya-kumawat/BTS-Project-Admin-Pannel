@@ -63,6 +63,9 @@ class ListItems extends Component {
       foodTypeData: [],
       foodTypeOptions: [],
       food_type_ids: [],
+      optionsData: [],
+      optionsList: [],
+      options_ids: [],
     };
   }
   componentDidMount() {
@@ -72,15 +75,16 @@ class ListItems extends Component {
     ItemsReducerData,
     FilterTypeData,
     FoodTypeReducerData,
+    OptionsReducer,
   }) {
-    let filterType = [];
-    let filterData = {};
     if (
       FilterTypeData &&
       FilterTypeData.updateReq &&
       FilterTypeData.updateReq !== this.props.FilterTypeData.updateReq
     ) {
       const { FilterTypeData } = this.props;
+      let filterType = [];
+      let filterData = {};
       if (FilterTypeData && FilterTypeData.data && FilterTypeData.data.length) {
         for (let i = 0; i < FilterTypeData.data.length; i++) {
           let id = FilterTypeData.data[i]._id;
@@ -109,6 +113,30 @@ class ListItems extends Component {
       this.setState({ filterType, filterData });
     }
     if (
+      OptionsReducer &&
+      OptionsReducer.updateReq &&
+      OptionsReducer.updateReq !== this.props.OptionsReducer.updateReq
+    ) {
+      const { OptionsReducer } = this.props;
+      let optionsList = [];
+      let optionsData =
+        OptionsReducer && OptionsReducer.data && OptionsReducer.data.length
+          ? OptionsReducer.data
+          : [];
+      if (optionsData && optionsData.length) {
+        optionsData
+          .filter((itm) => !itm.is_deleted)
+          .map((item) => {
+            optionsList.push({
+              name: item.name ? item.name : "",
+              id: item._id ? item._id : "",
+            });
+            return true;
+          });
+      }
+      this.setState({ optionsData, optionsList });
+    }
+    if (
       FoodTypeReducerData &&
       FoodTypeReducerData.updateReq &&
       FoodTypeReducerData.updateReq !== this.props.FoodTypeReducerData.updateReq
@@ -134,7 +162,6 @@ class ListItems extends Component {
       }
       this.setState({ foodTypeData, foodTypeOptions });
     }
-
     if (
       ItemsReducerData &&
       ItemsReducerData.updateReq &&
@@ -209,6 +236,7 @@ class ListItems extends Component {
       item_id: selectRowId,
     });
   };
+
   onSelectFoodType = (selectedList, selectedItem, foodTypeIds) => {
     const { selectRowId } = this.state;
     // let foodTypeIds = [];
@@ -235,6 +263,24 @@ class ListItems extends Component {
     });
   };
 
+  onSelectOptions = (selectedList, selectedItem, optionsIds) => {
+    const { selectRowId } = this.state;
+    this.props.onUpdateItems({
+      options: [...optionsIds, selectedItem.id],
+      item_id: selectRowId,
+    });
+  };
+  onRemoveOptions = (selectedList, removedItem, optionsIds) => {
+    const { selectRowId } = this.state;
+    let optionsData = optionsIds;
+    let index = optionsData.findIndex((i) => i === removedItem.id);
+    optionsData.splice(index, 1);
+    this.props.onUpdateItems({
+      options: optionsData,
+      item_id: selectRowId,
+    });
+  };
+
   getFilterName = (name, ids) => {
     const { filterType } = this.state;
     let filterName = "";
@@ -255,6 +301,7 @@ class ListItems extends Component {
     }
     return filterName;
   };
+
   getFoodTypeName = (foodTypeIds) => {
     const { foodTypeData } = this.state;
     let foodTypeDataName = "";
@@ -274,6 +321,27 @@ class ListItems extends Component {
     }
     return foodTypeDataName;
   };
+
+  getOptionsName = (optionsIds) => {
+    const { optionsData } = this.state;
+    let optionsDataName = "";
+    if (optionsData && optionsData.length) {
+      let data = "";
+      optionsIds.map((itm, ind) => {
+        data = optionsData.filter((i) => i._id === itm)[0];
+        optionsDataName +=
+          ind === 0
+            ? data && data.name
+              ? data.name
+              : ""
+            : data && data.name
+            ? ", " + data.name
+            : "";
+      });
+    }
+    return optionsDataName;
+  };
+
   getCategoryName = (cId) => {
     const { CategorieReducerData } = this.props;
     let data = "";
@@ -286,6 +354,7 @@ class ListItems extends Component {
     }
     return data && data.name ? data.name : "";
   };
+
   getSubCategoryName = (SubId) => {
     const { subCategorieReducerData } = this.props;
     let data = "";
@@ -307,8 +376,10 @@ class ListItems extends Component {
       foodTypeData,
       filterType,
       filterData,
+      optionsData,
     } = this.state;
     let food_type_ids = [];
+    let options_ids = [];
     let filterTypeData = filterData;
     if (
       item &&
@@ -324,6 +395,24 @@ class ListItems extends Component {
           name: data && data.name ? data.name : "",
           id: data && data._id ? data._id : "",
         });
+        return true;
+      });
+    }
+    if (
+      item &&
+      item.options &&
+      item.options.length &&
+      optionsData &&
+      optionsData.length
+    ) {
+      let data = "";
+      item.options.map((itm) => {
+        data = optionsData.filter((i) => i._id === itm)[0];
+        options_ids.push({
+          name: data && data.name ? data.name : "",
+          id: data && data._id ? data._id : "",
+        });
+        return true;
       });
     }
     if (item && item.filters && filterType && filterType.length) {
@@ -359,6 +448,7 @@ class ListItems extends Component {
       addItem: false,
       selectRowClick: selectRowId === item._id ? selectRowClick + 1 : 1,
       food_type_ids,
+      options_ids,
       filterData: filterTypeData,
       updateItemData:
         selectRowId === item._id
@@ -384,6 +474,9 @@ class ListItems extends Component {
       food_type_ids,
       filterType,
       filterData,
+      optionsData,
+      optionsList,
+      options_ids,
     } = this.state;
     const { ItemsReducerData, subCategoryId, pannelType, categoryID } =
       this.props;
@@ -528,43 +621,49 @@ class ListItems extends Component {
                               <td></td>
                               <td>
                                 <CSwitch
-                                  className={"mx-1"}
                                   variant={"3d"}
+                                  shape={"pill"}
+                                  size={"md"}
                                   checked={false}
                                 />
                               </td>
                               <td>
                                 <CSwitch
-                                  className={"mx-1"}
-                                  variant={"3d"}
+                                variant={"3d"}
+                                shape={"pill"}
+                                size={"md"}
                                   checked={false}
                                 />
                               </td>
                               <td>
                                 <CSwitch
-                                  className={"mx-1"}
                                   variant={"3d"}
+                                  shape={"pill"}
+                                  size={"md"}
                                   checked={false}
                                 />
                               </td>
                               <td>
                                 <CSwitch
-                                  className={"mx-1"}
                                   variant={"3d"}
+                                  shape={"pill"}
+                                  size={"md"}
                                   checked={true}
                                 />
                               </td>
                               <td>
                                 <CSwitch
-                                  className={"mx-1"}
                                   variant={"3d"}
+                                  shape={"pill"}
+                                  size={"md"}
                                   checked={true}
                                 />
                               </td>
                               <td>
                                 <CSwitch
-                                  className={"mx-1"}
                                   variant={"3d"}
+                                  shape={"pill"}
+                                  size={"md"}
                                   checked={false}
                                 />
                               </td>
@@ -799,7 +898,61 @@ class ListItems extends Component {
                                           )}
                                         </td>
 
-                                        <td></td>
+                                        <td>
+                                          {selectRowId === item._id &&
+                                          selectRowClick > 1 ? (
+                                            <Multiselect
+                                              options={optionsList}
+                                              selectedValues={options_ids}
+                                              onSelect={(
+                                                selectedList,
+                                                selectedItem
+                                              ) =>
+                                                this.onSelectOptions(
+                                                  selectedList,
+                                                  selectedItem,
+                                                  item.options
+                                                    ? item.options
+                                                    : []
+                                                )
+                                              }
+                                              onRemove={(
+                                                selectedList,
+                                                removedItem
+                                              ) =>
+                                                this.onRemoveOptions(
+                                                  selectedList,
+                                                  removedItem,
+                                                  item.options
+                                                    ? item.options
+                                                    : []
+                                                )
+                                              }
+                                              displayValue="name"
+                                              showCheckbox={true}
+                                              id="css_custom"
+                                              style={{
+                                                chips: { display: "none" },
+                                                searchBox: {
+                                                  border: "none",
+                                                  borderBottom:
+                                                    "1px solid #19c133",
+                                                  borderRadius: "0px",
+                                                  background: "#fff",
+                                                },
+                                              }}
+                                            />
+                                          ) : (
+                                            <>
+                                              {item.options &&
+                                              item.options.length
+                                                ? this.getOptionsName(
+                                                    item.options
+                                                  )
+                                                : null}
+                                            </>
+                                          )}
+                                        </td>
                                         <td>
                                           {selectRowId === item._id &&
                                           selectRowClick > 1 ? (
@@ -924,8 +1077,9 @@ class ListItems extends Component {
                                         </td>
                                         <td>
                                           <CSwitch
-                                            className={"mx-1"}
                                             variant={"3d"}
+                                            shape={"pill"}
+                                            size={"md"}
                                             name="buy_one_get_one"
                                             checked={item.buy_one_get_one}
                                             onChange={(e) =>
@@ -946,8 +1100,9 @@ class ListItems extends Component {
                                         </td>
                                         <td>
                                           <CSwitch
-                                            className={"mx-1"}
                                             variant={"3d"}
+                                            shape={"pill"}
+                                            size={"md"}
                                             name="half_price"
                                             checked={item.half_price}
                                             onChange={(e) =>
@@ -968,8 +1123,9 @@ class ListItems extends Component {
                                         </td>
                                         <td>
                                           <CSwitch
-                                            className={"mx-1"}
                                             variant={"3d"}
+                                            shape={"pill"}
+                                            size={"md"}
                                             name="has_tax"
                                             checked={item.has_tax}
                                             onChange={(e) =>
@@ -990,8 +1146,9 @@ class ListItems extends Component {
 
                                         <td>
                                           <CSwitch
-                                            className={"mx-1"}
                                             variant={"3d"}
+                                            shape={"pill"}
+                                            size={"md"}
                                             name="is_web"
                                             checked={item.is_web}
                                             onChange={(e) =>
@@ -1011,8 +1168,9 @@ class ListItems extends Component {
                                         </td>
                                         <td>
                                           <CSwitch
-                                            className={"mx-1"}
                                             variant={"3d"}
+                                            shape={"pill"}
+                                            size={"md"}
                                             name="is_tw"
                                             checked={item.is_tw}
                                             onChange={(e) =>
@@ -1032,8 +1190,9 @@ class ListItems extends Component {
                                         </td>
                                         <td>
                                           <CSwitch
-                                            className={"mx-1"}
                                             variant={"3d"}
+                                            shape={"pill"}
+                                            size={"md"}
                                             name="is_discount_applied"
                                             checked={item.is_discount_applied}
                                             onChange={(e) =>
@@ -1152,7 +1311,7 @@ const mapStateToProps = (state) => ({
   FilterTypeData: state.FilterTypeReducer,
   FoodTypeReducerData: state.FoodTypeReducer,
   CategorieReducerData: state.CategorieReducer,
-
+  OptionsReducer: state.OptionsReducer,
   subCategorieReducerData: state.SubCategorieReducer,
   ReducerData: state.ItemsReducer,
   ModalReducer: state.ModalReducer,

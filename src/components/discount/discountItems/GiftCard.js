@@ -40,7 +40,7 @@ class GiftCard extends Component {
       price: 0,
       amount: 0,
       card_type: "GIFT_CARD",
-      expiry_date: "",
+      expiry_date: new Date(),
     };
   }
   componentDidMount() {
@@ -68,7 +68,7 @@ class GiftCard extends Component {
         image: "",
         price: 0,
         amount: 0,
-        expiry_date: "",
+        expiry_date: new Date(),
       });
     }
   };
@@ -239,7 +239,7 @@ class GiftCard extends Component {
                     <th className="td2">Amount</th>
                     <th className="td2">Discount</th>
                     <th className="td2">Minimum Order</th>
-                    <th className="td2">Expiry Days</th>
+                    <th className="td2">Expiry Day Date</th>
                     <th className="td2">Type</th>
                     {/* <th className="td2">Discount_Type</th> */}
                     {/* <th className="td2">Payment_Type</th> */}
@@ -467,63 +467,63 @@ class GiftCard extends Component {
                           </td>
                           <td className="flex-row">
                             {selectRowId === itm._id && selectRowClick > 1 ? (
-                              <input
-                                className="w-100"
-                                type="number"
-                                name="expiry_date"
-                                value={expiry_date}
-                                onChange={(e) => {
-                                  this.setState({
-                                    [e.target.name]: e.target.value,
-                                  });
-                                }}
-                                onKeyPress={({ key }) =>
-                                  key === "Enter"
-                                    ? this.props.onUpdateData({
-                                        expiry_date: expiry_date,
-                                        discount_id: selectRowId,
-                                        card_type: "GIFT_CARD",
-                                      })
-                                    : null
-                                }
-                                onBlur={() =>
-                                  this.props.onUpdateData({
-                                    expiry_date: expiry_date,
-                                    discount_id: selectRowId,
-                                    card_type: "GIFT_CARD",
-                                  })
-                                }
-                              />
-                            ) : // <DatePicker
-                            //   selected={expiry_date}
-                            //   // timeInputLabel="Time:"
-                            //   dateFormat="yyyy/MM/dd h:mm aa"
-                            //   name="expiry_date"
-                            //   value={expiry_date}
-                            //   showTimeSelect
-                            //   onChange={(date) => {
-                            //     this.setState({
-                            //       expiry_date: date,
-                            //     });
-                            //   }}
-                            //   onKeyPress={({ key }) =>
-                            //     key === "Enter"
-                            //       ? this.props.onUpdateData({
-                            //           expiry_date: expiry_date,
-                            //           discount_id: selectRowId,
-                            //           card_type: "GIFT_CARD",
-                            //         })
-                            //       : null
-                            //   }
-                            //   onBlur={() =>
-                            //     this.props.onUpdateData({
-                            //       expiry_date: expiry_date,
-                            //       discount_id: selectRowId,
-                            //       card_type: "GIFT_CARD",
-                            //     })
-                            //   }
-                            // />
-                            itm.expiry_date ? (
+                              // <input
+                              //   className="w-100"
+                              //   type="number"
+                              //   name="expiry_date"
+                              //   value={expiry_date}
+                              //   onChange={(e) => {
+                              //     this.setState({
+                              //       [e.target.name]: e.target.value,
+                              //     });
+                              //   }}
+                              //   onKeyPress={({ key }) =>
+                              //     key === "Enter"
+                              //       ? this.props.onUpdateData({
+                              //           expiry_date: expiry_date,
+                              //           discount_id: selectRowId,
+                              //           card_type: "GIFT_CARD",
+                              //         })
+                              //       : null
+                              //   }
+                              //   onBlur={() =>
+                              //     this.props.onUpdateData({
+                              //       expiry_date: expiry_date,
+                              //       discount_id: selectRowId,
+                              //       card_type: "GIFT_CARD",
+                              //     })
+                              //   }
+                              // />
+                             <DatePicker
+                              selected={expiry_date}
+                              // timeInputLabel="Time:"
+                              dateFormat="yyyy/MM/dd h:mm aa"
+                              name="expiry_date"
+                              value={expiry_date}
+                              showTimeSelect
+                              onChange={(date) => {
+                                this.setState({
+                                  expiry_date: date,
+                                });
+                              }}
+                              onKeyPress={({ key }) =>
+                                key === "Enter"
+                                  ? this.props.onUpdateData({
+                                      expiry_date: expiry_date,
+                                      discount_id: selectRowId,
+                                      card_type: "GIFT_CARD",
+                                    })
+                                  : null
+                              }
+                              onBlur={() =>
+                                this.props.onUpdateData({
+                                  expiry_date: expiry_date,
+                                  discount_id: selectRowId,
+                                  card_type: "GIFT_CARD",
+                                })
+                              }
+                            />
+                            ) :itm.expiry_date ? (
                               moment(itm.expiry_date).format("LLL")
                             ) : null}
                           </td>

@@ -48,21 +48,26 @@ class HappyHourse extends Component {
         discount_id: "",
         discount: 0,
         selectRowClick: 1,
-        day_time: {
-          day: "",
-          time: "",
-        },
+        // day_time: {
+        //   day: "",
+        //   time: "",
+        // },
       });
     }
   };
 
   onRowClick = (item) => {
-    const { selectRowId, selectRowClick } = this.state;
+    const { selectRowId, selectRowClick, day_time } = this.state;
     this.setState({
       selectRowId: item._id,
       min_order_value: item.min_order_value,
       discount: item.discount,
-      day_time: item.day_time ? item.day_time : {},
+      day_time:
+        selectRowId === item._id && selectRowClick === 1
+          ? day_time
+          : item.day_time
+          ? item.day_time
+          : { day: "", time: "" },
       newRow: false,
       selectRowClick: selectRowId === item._id ? selectRowClick + 1 : 1,
     });
@@ -145,7 +150,7 @@ class HappyHourse extends Component {
       selectRowClick,
       min_order_value,
     } = this.state;
-    console.log("day_time",day_time);
+    console.log("day_time", day_time);
     return (
       <>
         <CCard>
@@ -288,13 +293,22 @@ class HappyHourse extends Component {
                                         day: e.target.value,
                                       },
                                     },
-                                    // () =>
-                                    //   this.props.onUpdateData({
-                                    //     day_time: day_time,
-                                    //     discount_id: selectRowId,
-                                    //   })
+                                    () =>
+                                      this.props.onUpdateData({
+                                        day_time: {
+                                          ...day_time,
+                                          day: e.target.value,
+                                        },
+                                        discount_id: selectRowId,
+                                      })
                                   );
                                 }}
+                                onBlur={() =>
+                                  this.props.onUpdateData({
+                                    day_time: day_time,
+                                    discount_id: selectRowId,
+                                  })
+                                }
                                 value={day_time.day}
                               >
                                 <option value={null}>Select</option>
@@ -320,16 +334,25 @@ class HappyHourse extends Component {
                                     {
                                       day_time: {
                                         ...day_time,
-                                        day: e.target.value,
+                                        time: e.target.value,
                                       },
                                     },
-                                    // () => () =>
-                                    //   this.props.onUpdateData({
-                                    //     day_time: day_time,
-                                    //     discount_id: selectRowId,
-                                    //   })
+                                    () =>
+                                      this.props.onUpdateData({
+                                        day_time: {
+                                          ...day_time,
+                                          time: e.target.value,
+                                        },
+                                        discount_id: selectRowId,
+                                      })
                                   );
                                 }}
+                                onBlur={() =>
+                                  this.props.onUpdateData({
+                                    day_time: day_time,
+                                    discount_id: selectRowId,
+                                  })
+                                }
                               />
                             ) : itm.day_time && itm.day_time.time ? (
                               itm.day_time.time

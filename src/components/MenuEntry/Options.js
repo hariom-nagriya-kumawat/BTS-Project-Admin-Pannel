@@ -232,7 +232,7 @@ class SpecialDis extends Component {
                     <tr>
                       <th className="w-25">Name</th>
                       <th className="w-25">Max Qty </th>
-                      {/* <th className="w-25">Multi Selected	</th> */}
+                      <th className="w-25">Multi Selected	</th>
                       <th className="w-50">Action</th>
                     </tr>
                   </thead>
@@ -256,8 +256,9 @@ class SpecialDis extends Component {
                         <td></td>
                         <td>
                           <CSwitch
-                            className={"sm-1"}
-                            variant={"3d"}
+                           variant={"3d"}
+                           shape={"pill"}
+                           size={"md"}
                             checked={true}
                           />
                         </td>
@@ -337,8 +338,9 @@ class SpecialDis extends Component {
 
                             <td>
                               <CSwitch
-                                className={"sm-1"}
                                 variant={"3d"}
+                                shape={"pill"}
+                                size={"md"}
                                 name="is_multi_selected"
                                 checked={itm.is_multi_selected}
                                 onChange={(e) =>

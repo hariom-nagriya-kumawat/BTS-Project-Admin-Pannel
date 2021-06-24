@@ -165,46 +165,48 @@ class Filter extends Component {
     return (
       <>
         <CCard
-          className="d-flex flex-row justify-content-between w-100"
-          style={{ height: "50px" }}
+        // className="d-flex flex-row justify-content-between w-100"
+        // style={{ height: "50px" }}
         >
-          <h6 className="mt-3 px-3">
-            <i className="fas fa-list-alt mr-2"></i>List Of Filter
-          </h6>
-          <div className="mt-2 d-flex flex-row">
-            <CButton
-              className="bg1 text-white mr-3 h-75"
-              size="sm"
-              onClick={() =>
-                this.props.modalOpenRequest({ addAllergyModalOpen: true })
-              }
-            >
-              <i className="fas fa-plus mr-1" /> Add New Filter
-            </CButton>
+          <CCardHeader className="d-flex flex-row justify-content-between pr-0">
+            <h6 className="pt-1">
+              <i className="fas fa-list-alt mr-2"></i>List Of Filter
+            </h6>
+            <div className="d-flex flex-row">
+              <CButton
+                className="bg1 text-white mr-3"
+                size="sm"
+                onClick={() =>
+                  this.props.modalOpenRequest({ addAllergyModalOpen: true })
+                }
+              >
+                <i className="fas fa-plus mr-1" /> Add New Filter
+              </CButton>
 
-            {this.state.show === true ? (
-              <CTooltip content="expanded">
+              {this.state.show === true ? (
+                <CTooltip content="expanded">
+                  <i
+                    className="fas fa-caret-down text1 mr-2  fa-2x"
+                    onClick={() =>
+                      this.setState({
+                        show: false,
+                      })
+                    }
+                  />
+                </CTooltip>
+              ) : (
                 <i
-                  className="fas fa-caret-down text1 mr-2  fa-2x"
+                  className="fas fa-caret-right fa-2x mr-2"
+                  aria-hidden="true"
                   onClick={() =>
                     this.setState({
-                      show: false,
+                      show: true,
                     })
                   }
                 />
-              </CTooltip>
-            ) : (
-              <i
-                className="fas fa-caret-right fa-2x mr-2"
-                aria-hidden="true"
-                onClick={() =>
-                  this.setState({
-                    show: true,
-                  })
-                }
-              />
-            )}
-          </div>
+              )}
+            </div>
+          </CCardHeader>
         </CCard>
         <CCollapse show={show}>
           <CRow className="mt-2">

@@ -267,7 +267,7 @@ class ListItems extends Component {
         });
       });
     }
-    if (selectRowClick === 1) this.props.setSubCId(item._id);
+    if (selectRowId !== item._id) this.props.setSubCId(item._id);
     this.setState({
       selectRowId: item._id,
       addCategory: false,
@@ -422,8 +422,9 @@ class ListItems extends Component {
                         <>
                           {addSubCategory ? (
                             <tr>
+                              <td></td>
                               <td>
-                                <td></td>
+                                
                                 <input
                                   className="w-100"
                                   type="text"
@@ -447,22 +448,25 @@ class ListItems extends Component {
                               <td></td>
                               <td>
                                 <CSwitch
-                                  className={"mx-1"}
-                                  variant={"3d"}
+                               variant={"3d"}
+                               shape={"pill"}
+                               size={"md"}
                                   name="is_web"
                                 />
                               </td>
                               <td>
                                 <CSwitch
-                                  className={"mx-1"}
-                                  variant={"3d"}
+                                 variant={"3d"}
+                                 shape={"pill"}
+                                 size={"md"}
                                   name="is_tw"
                                 />
                               </td>
                               <td>
                                 <CSwitch
-                                  className={"mx-1"}
-                                  variant={"3d"}
+                                 variant={"3d"}
+                                 shape={"pill"}
+                                 size={"md"}
                                   name="is_discount_applied"
                                 />
                               </td>
@@ -695,8 +699,9 @@ class ListItems extends Component {
                                           </td>
                                           <td>
                                             <CSwitch
-                                              className={"mx-1"}
-                                              variant={"3d"}
+                                           variant={"3d"}
+                                           shape={"pill"}
+                                           size={"md"}
                                               name="is_web"
                                               checked={item.is_web}
                                               onChange={(e) =>
@@ -709,8 +714,9 @@ class ListItems extends Component {
                                           </td>
                                           <td>
                                             <CSwitch
-                                              className={"mx-1"}
-                                              variant={"3d"}
+                                             variant={"3d"}
+                                             shape={"pill"}
+                                             size={"md"}
                                               name="is_tw"
                                               checked={item.is_tw}
                                               onChange={(e) =>
@@ -733,8 +739,9 @@ class ListItems extends Component {
                                           </td>
                                           <td>
                                             <CSwitch
-                                              className={"mx-1"}
                                               variant={"3d"}
+                                              shape={"pill"}
+                                              size={"md"}
                                               name="is_discount_applied"
                                               checked={item.is_discount_applied}
                                               onChange={(e) =>

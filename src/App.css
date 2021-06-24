@@ -2,7 +2,7 @@ html {
   --Bg1: #19c133;
   --Bg2: #000;
   --Text1: white;
-  --error:#dc3545;
+  --error: #dc3545;
 }
 
 .bg1 {
@@ -15,7 +15,7 @@ html {
   background-color: #ddd !important;
 }
 .bg3 {
-  background-color: var(--Bg2)!important;
+  background-color: var(--Bg2) !important;
 }
 .table1header {
   position: -webkit-sticky;
@@ -31,13 +31,46 @@ html {
 input[type="checkbox"] {
   background-color: var(--Bg1);
 }
-.table td,
-table th {
-  border: 2px solid #ced2d8;
-  padding: 8px 16px;
+
+.table th {
+  text-align: center;
+  color: #0079f2 !important;
+  text-align: center;
+  white-space: nowrap;
+  padding: 1em !important;
+  font-size: 14px;
+  font-weight: bold;
+  vertical-align: middle !important;
+}
+.table {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.table td {
   text-align: center;
   text-transform: capitalize;
+  padding: .3em !important;
+  text-align: center;
+  align-items: center;
+  vertical-align: middle !important;
 }
+.mintd2{
+  max-width: 50px !important;
+}
+.maxth2{
+  max-width: 350px !important;
+}
+.maxtd2{
+  max-width: 350px !important;
+}
+
+.table tr:nth-child(even){background-color: #f2f2f2;}
+
+.table tr:hover {background-color: #f2f2f2;}
+
+
 .optionContainer .highlight {
   background: none;
   color: var(--Bg2);
@@ -47,23 +80,14 @@ table th {
   color: var(--Text1);
 }
 
-.c-switch-input:checked + .c-switch-slider::before{
+.c-switch-input:checked + .c-switch-slider::before {
   background-color: var(--Bg1) !important;
   border-color: var(--Bg1) !important;
 }
-.c-switch-input+ .c-switch-slider::after{
+.c-switch-input + .c-switch-slider::after {
   background-color: red !important;
 }
-.table th {
-  border: 2px solid #ced2d8;
-  text-align: center;
-  background-color: var(--Bg1);
-  color: var(--Text1);
-}
-.td2{
-  min-width: 100px !important;
-  max-width: 300px !important;
-}
+
 .cont {
   /* background: linear-gradient(-45deg, #ced2d8, #6b6769, #343a40, var(--Bg1)); */
   background-size: 400% 400%;
@@ -180,7 +204,8 @@ html:not([dir="rtl"]) .modal-header .close {
   height: 20px !important;
   font-size: 12px;
 }
-.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link{
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
   background-color: var(--Bg1);
   color: var(--Text1);
 }
@@ -191,7 +216,7 @@ input {
   border-bottom: 1px solid var(--Bg1);
 }
 
-.fas{
+.fas {
   cursor: pointer;
 }
 
@@ -305,7 +330,14 @@ input {
 .else {
   font-size: 0.75em;
 }
-html:not([dir="rtl"]) .modal-header .close{
+html:not([dir="rtl"]) .modal-header .close {
   color: #fff !important;
   font-weight: 600;
+}
+.badge {
+  padding: 5px !important;
+  border-radius:10px !important;
+}
+.card-header{
+  text-transform: uppercase !important;
 }
